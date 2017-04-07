@@ -22,7 +22,7 @@ class Person:
 
 
 name = input("What is your name? : ") 
-pet = input("What is your favorite kind of pet? : ")
+pet = input("What is your favorite pet? : ")
 
 newPerson = Person(name, pet)
 newPerson.introduce()
