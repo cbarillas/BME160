@@ -4,11 +4,10 @@
  
  
 """
-This is a demonstration program that shows off some basic interactive features
-of a python program. The program asks the user to enter a name and their fav pet, builds an object
+The program asks the user to enter a name and their favorite pet, builds a Person object
 with that name and pet, and then has the new object introduce itself.
  
-input: a string of arbitrary length, which is used to name the new person object
+input: a string of arbitrary length, which is used to name the new Person object
 output: greeting printed to screen
 """
  
