@@ -6,10 +6,10 @@
 This is my first program in python, prints out my name.
 """ 
  
-class announcer (str):
-    def printMe (self):
-        print (self)
+class Announcer(str):
+    def printMe(self):
+        print(self)
 
-student = announcer ('Hello Carlos Barillas')
+student = Announcer('Hello Carlos Barillas')
 #prints out student name using printMe method from announcer class
 student.printMe()
