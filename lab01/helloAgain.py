@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Name: David Bernick(dbernick)
+# Name: Carlos Barillas (cbarilla)
 # Group Members: none
  
  
@@ -12,15 +12,17 @@ input: a string of arbitrary length, which is used to name the new person object
 output: greeting printed to screen
 """
  
-class person:
-    def __init__(self,name):
+class Person:
+    def __init__(self,name,pet):
         self.myName = name
-        
-    def introduce (self):
-        print ("Hi there, I am {0}".format(self.myName))
- 
- 
-name = input( "What is my name? : " )
- 
-newPerson = person (name)
+        self.myPet = pet
+
+    def introduce(self):
+        print("Hi there, I am {0} and I like {1}".format(self.myName,self.myPet))
+
+
+name = input( "What is my name? : " ) 
+pet = input( "What is my favorite kind of pet? : ")
+
+newPerson = Person(name, pet)
 newPerson.introduce()
