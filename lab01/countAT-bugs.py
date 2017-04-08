@@ -15,7 +15,7 @@ class DNAString(str):
         
     def length(self):
         """Returns length of sequence"""
-        return (len(self))
+        return len(self)
 
     def getAT(self):
         """Returns the AT content of the sequence""" 
