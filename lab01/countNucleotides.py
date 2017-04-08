@@ -15,27 +15,27 @@ class DNAString(str):
 
     def length(self):
         """Returns length of sequence"""
-        return (len(self))
+        return len(self)
 
     def getA(self):
         """Returns the number of A's in the sequence"""
         num_A = self.count("A")
-        return (num_A)
+        return num_A
 
     def getC(self):
         """Returns the number of C's in the sequence"""
         num_C = self.count("C")
-        return (num_C)
+        return num_C
 
     def getG(self):
         """Returns the number of G's in the sequence"""
         num_G = self.count("G")
-        return (num_G)
+        return num_G
 
     def getT(self):
         """Returns the number of T's in the sequence"""
         num_T = self.count("T")
-        return (num_T)
+        return num_T
 
 
 """
