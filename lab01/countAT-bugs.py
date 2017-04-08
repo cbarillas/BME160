@@ -10,18 +10,15 @@ class DNAString(str):
     sequence -- DNA sequence user enters 
     """
     def __new__(self,sequence):
-        """returns a copy of sequence in upper case letters"""
+        """Returns a copy of sequence in upper case letters"""
         return str.__new__(self,sequence.upper())
         
     def length(self):
-        """returns length of sequence"""
+        """Returns length of sequence"""
         return (len(self))
 
     def getAT(self):
-        """
-        returns the AT content of the sequence - 
-        num of A's + num of T's / length of seuqence
-        """ 
+        """Returns the AT content of the sequence""" 
         num_A = self.count("A")
         num_T = self.count("T")
         return ((num_A + num_T)/self.length())
