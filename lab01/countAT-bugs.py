@@ -3,19 +3,33 @@
 # Group Members: none
  
 class DNAString(str):
-    def __new__(self,s):
-        return str.__new__(self,s.upper())
-      
+    """
+    DNAString class returns a string object in upper case letters
+
+    Keyword arguments:
+    sequence -- DNA sequence user enters 
+    """
+    def __new__(self,sequence):
+        """returns a copy of sequence in upper case letters"""
+        return str.__new__(self,sequence.upper())
+        
     def length(self):
+        """returns length of sequence"""
         return (len(self))
 
     def getAT(self):
+        """
+        returns the AT content of the sequence - 
+        num of A's + num of T's / length of seuqence
+        """ 
         num_A = self.count("A")
         num_T = self.count("T")
-        return ((num_A + num_T)/ self.length() )
+        return ((num_A + num_T)/self.length())
 
- 
+"""
+Builds a new DNAString object based on what the user inputs
+Prints the AT content of the sequence
+"""
 DNA = input("Enter a DNA sequence: ")
 coolString = DNAString(DNA)
- 
-print ("AT content = {:0.3f}".format(coolString.getAT()) )
+print ("AT content = {:0.3f}".format(coolString.getAT()))
