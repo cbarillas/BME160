@@ -7,9 +7,13 @@ This is my first program in python, prints out my name.
 """ 
  
 class Announcer(str):
+    """
+    Announcer class inherits from str class
+    """
     def printMe(self):
+        """Print method belonging to Announcer class, prints string"""
         print(self)
 
 student = Announcer('Hello Carlos Barillas')
-#prints out student name using printMe method from announcer class
+"""Prints out student name using printMe method from announcer class"""
 student.printMe()
