@@ -1,8 +1,8 @@
 I. File List
 ------------
-helloMe.py                            Prints out my name.
-helloAgain.py                         Prints out user's name and their favorite pet.
-myBio.py                              Returns information about myself.
-countAT-bugsSoln.py                   Asks for a DNA sequence, returns AT content.
-countNucleotides.py                   Prints out length of a DNA sequence & number of each base found in sequence.
-README                                This file.
+helloMe.py                Prints out my name.
+helloAgain.py             Prints out user's name and their favorite pet.
+myBio.py                  Returns information about myself.
+countAT-bugsSoln.py       Asks for a DNA sequence, returns AT content.
+countNucleotides.py       Prints out length of a DNA sequence & number of each base found in sequence.
+README                    This file.
