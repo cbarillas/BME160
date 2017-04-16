@@ -21,8 +21,9 @@ class SequenceCleaner(str):
         newString = self[1:]
         parsed = newString.split(":")
         instr,rid,fid,fcl,tnum,x,y = parsed
-        print(parsed)
-    
+        print('Instrument = '+instr+'\nRun ID = '+rid+'\nFlow Cell ID = '+fid)
+        print('Flow Cell Lane = '+fcl+'\nTile Number = '+tnum+'\nX-coord = '+x)
+        print('Y-coord = '+y)
 """
 Builds a new string object of SequenceCleaner class based on what the user 
 inputs.
