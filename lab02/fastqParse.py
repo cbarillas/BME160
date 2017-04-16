@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#/usr/bin/env python3
 # Name: Carlos Barillas (cbarilla)
 # Group Members: none
 
@@ -12,24 +12,24 @@ class SequenceCleaner(str):
         """Returns a copy of sequence in upper case letters."""
         return str.__new__(self, sequence.upper())
 
-    def parseString(self):
+    def parseSequence(self):
         """
         First removes '@' symbol 
-        Then splits string based on ':' delimiter
+        Then splits sequence based on ':' delimiter
         """
-        newString = list()
-        newString = self[1:]
-        parsed = newString.split(":")
-        instr,rid,fid,fcl,tnum,x,y = parsed
+        newSeq = list()
+        newSeq = self[1:]
+        parsedSeq = newSeq.split(":")
+        instr,rid,fid,fcl,tnum,x,y = parsedSeq
         print('Instrument = '+instr+'\nRun ID = '+rid+'\nFlow Cell ID = '+fid)
-        print('Flow Cell Lane = '+fcl+'\nTile Number = '+tnum+'\nX-coord = '+x)
-        print('Y-coord = '+y)
+        print('Flow Cell Lane = '+fcl+'\nTile Number = '+tnum)
+        print('X-coord = '+x+'\nY-coord = '+y)
 """
 Builds a new string object of SequenceCleaner class based on what the user 
 inputs.
 Removes the ambiguous parts of the sequence, outputs the “cleaned” 
 sequence, replacing the ambiguous parts with a count in {}’s  
 """
-DNA = input("Enter a DNA sequence: ")
-seq = SequenceCleaner(DNA)
-seq.parseString()
+seqname = input("Enter a single line of a FASTQ formatted file: ")
+seq = SequenceCleaner(seqname)
+seq.parseSequence()
