@@ -49,7 +49,8 @@ class Triad:
     # Calculates the angles in degrees for angleQ
     def angleQ(self):
         """Provides the angle made at point q by segments qp and qr
-        (degrees)."""
+        (degrees).
+        """
         return acos(self.ndot(self.p, self.q, self.r) /
         sqrt(self.d2(self.p, self.q)*self.d2(self.r, self.q))) * 180/pi
 
