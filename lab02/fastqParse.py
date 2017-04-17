@@ -2,14 +2,14 @@
 # Name: Carlos Barillas (cbarilla)
 # Group Members: none
 
-class FastQParse(str):
+class FastqParse(str):
     """
-    SequenceCleaner class returns a string object in upper case letters.
+    FastqParse class takes a string object and returns a sliced string object.
     Keyword arguments:
-    sequence -- DNA sequence user enters
+    sequence -- Single line of a FASTQ file.
     """
     def __new__(self, sequence):
-        """Returns a copy of sequence without '@'."""
+        """Slices sequence & returns a string object w/o '@' symbol."""
         return str.__new__(self, sequence[1:])
 
     def parseSequence(self):
@@ -19,12 +19,13 @@ class FastQParse(str):
         print('Instrument = '+instr+'\nRun ID = '+rid+
               '\nFlow Cell ID = '+fcid+'\nFlow Cell Lane = '+fcl+
               '\nTile Number = '+tnum+'\nX-coord ='+x+'\nY-coord = '+y)
+
 """
-Builds a new string object of SequenceCleaner class based on what the user 
-inputs.
-Removes the ambiguous parts of the sequence, outputs the “cleaned” 
-sequence, replacing the ambiguous parts with a count in {}’s  
+Builds a new string object of FastqParse class based on what the user inputs.
+
+Parses out each field of the run information from the string and displays 
+each of them on a new line.
 """
 seqName = input("Enter a single line of a FASTQ formatted file: ")
-seq = FastQParse(seqName)
+seq = FastqParse(seqName)
 seq.parseSequence()
