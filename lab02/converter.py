@@ -84,6 +84,11 @@ myDictionary = {
     'TYR': 'Y', 'VAL': 'V'
 }
 
+"""
+Takes user input and creates a string object belonging to class Converter.
+
+Translates users input.
+"""
 seq = input("Enter either an amino acid code or a codon code to convert : ")
 code = Converter(seq)
 code.translate()
