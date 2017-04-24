@@ -29,7 +29,7 @@ class ProteinParam(str):
     aa2chargeNeg = {'D': 3.86, 'E': 4.25, 'C': 8.33, 'Y': 10}
     aaNterm = 9.69
     aaCterm = 2.34
-    aaDictionary = {}
+    muDictionary = {}
 
 
     # the __init__ method requires a protein string to be provided, either as a
@@ -38,14 +38,12 @@ class ProteinParam(str):
         l = ''.join(protein).split()
         self.protString = ''.join(l).upper()
 
-        for aa in self.aa2mw.keys(): #only counts aa, not unexpected characters
-            self.aaDictionary[aa] = protString.count(aa)
-
     def aaCount(self):
-        aminoAcidNum = 0
-        for aminoAcid in self.protString:
-            n += 1
-        return n
+        aaTotal = 0
+        for i in self:                          # Iterates through each character in string object.
+            if i.upper() in self.aa2mw.keys():  # Checks if character is valid by checking if it's in dictionary keys.
+                aaTotal += 1
+        return aaTotal
 
 
 def pI(self):
@@ -77,18 +75,21 @@ def molecularWeight(self):
 
 import sys
 
+
 for inString in sys.stdin:
     myParamMaker = ProteinParam(inString)
     myAAnumber = myParamMaker.aaCount()
-    print("Number of Amino Acids: {aaNum}".format(aaNum=myAAnumber))
-    print("Molecular Weight: {:.1f}".format(myParamMaker.molecularWeight()))
-    print("molar Extinction coefficient: {:.2f}".format(myParamMaker.molarExtinction()))
-    print("mass Extinction coefficient: {:.2f}".format(myParamMaker.massExtinction()))
-    print("Theoretical pI: {:.2f}".format(myParamMaker.pI()))
-    print("Amino acid composition:")
-    myAAcomposition = myParamMaker.aaComposition()
-    keys = list(myAAcomposition.keys())
-    keys.sort()
-    if myAAnumber == 0: myAAnumber = 1  # handles the case where no AA are present
-    for key in keys:
-        print("\t{} = {:.2%}".format(key, myAAcomposition[key] / myAAnumber))
+    print(myAAnumber)
+
+    #print("Number of Amino Acids: {aaNum}".format(aaNum=myAAnumber))
+    #print("Molecular Weight: {:.1f}".format(myParamMaker.molecularWeight()))
+    #print("molar Extinction coefficient: {:.2f}".format(myParamMaker.molarExtinction()))
+    #print("mass Extinction coefficient: {:.2f}".format(myParamMaker.massExtinction()))
+    #print("Theoretical pI: {:.2f}".format(myParamMaker.pI()))
+    #print("Amino acid composition:")
+    #myAAcomposition = myParamMaker.aaComposition()
+    #keys = list(myAAcomposition.keys())
+    #keys.sort()
+    #if myAAnumber == 0: myAAnumber = 1  # handles the case where no AA are present
+    #for key in keys:
+    #    print("\t{} = {:.2%}".format(key, myAAcomposition[key] / myAAnumber))
