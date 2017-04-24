@@ -53,7 +53,16 @@ class ProteinParam(str):
 
 
     def pI(self):
-        pass
+        maxCharge = 10000
+        bestPH = 0
+        PH = 0
+        while PH < 14.01:
+            charge = self.charge(PH)
+            if charge < maxCharge:
+                maxCharge = charge
+                bestPH = PH
+            PH += 0.01
+        return bestPH
 
 
     def aaComposition(self):
@@ -66,12 +75,30 @@ class ProteinParam(str):
         return self.aaDictionary
 
 
-    def _charge_(self):
-        pass
+    def charge(self, pH):
 
+        posValues = 0
+        for aa in ProteinParam.aa2chargePos:
+            nAA = ProteinParam.aaDictionary[aa]
+            posValues += nAA *((10**ProteinParam.aa2chargePos[aa])/(10**ProteinParam.aa2chargePos[aa]+10**pH))
+        posValues += (10**ProteinParam.aaNterm)/(10**ProteinParam.aaNterm + 10**pH)
+
+        negValues = 0
+        for aa in ProteinParam.aa2chargeNeg:
+            nAA = ProteinParam.aaDictionary[aa]
+            negValues += nAA * ((10**pH)/(10**ProteinParam.aa2chargeNeg[aa]+10**pH))
+        negValues += (10**pH)/(10**ProteinParam.aaCterm + 10**pH)
+
+        netCharge = abs(posValues - negValues)
+
+        return netCharge
 
     def molarExtinction(self):
-        pass
+        tyrosine = ProteinParam.aaDictionary.get('Y',0) * ProteinParam.aa2abs280.get('Y',0)
+        tryptophans = ProteinParam.aaDictionary.get('W',0) * ProteinParam.aa2abs280.get('W',0)
+        cysteines = ProteinParam.aaDictionary.get('C',0) * ProteinParam.aa2abs280.get('C',0)
+        molarEC = tyrosine + tryptophans + cysteines
+        return molarEC
 
 
     def massExtinction(self):
@@ -84,10 +111,7 @@ class ProteinParam(str):
         Calculates the MW of the protein sequence. 
         """
         aaWeight = 0
-        waterMW = ProteinParam.mwH2O *(ProteinParam.aaCount(self) - 1)
-        #for aa in ProteinParam.aaDictionary:
-        #    aaWeight += (ProteinParam.aaDictionary.get(aa)*ProteinParam.aa2mw.get(aa))
-
+        waterMW = ProteinParam.mwH2O * (ProteinParam.aaCount(self) - 1)
         for aa, count in ProteinParam.aaDictionary.items():
             aaWeight += count * ProteinParam.aa2mw[aa]
         return aaWeight - waterMW
@@ -96,20 +120,18 @@ class ProteinParam(str):
 from pprint import pprint as pp
 import sys
 
-
 for inString in sys.stdin:
     myParamMaker = ProteinParam(inString)
     myAAnumber = myParamMaker.aaCount()
-    myAAcomposition = myParamMaker.aaComposition()
     print("Number of Amino Acids: {aaNum}".format(aaNum=myAAnumber))
     print("Molecular Weight: {:.1f}".format(myParamMaker.molecularWeight()))
-    #print("molar Extinction coefficient: {:.2f}".format(myParamMaker.molarExtinction()))
-    #print("mass Extinction coefficient: {:.2f}".format(myParamMaker.massExtinction()))
-    #print("Theoretical pI: {:.2f}".format(myParamMaker.pI()))
-    #print("Amino acid composition:")
-    #myAAcomposition = myParamMaker.aaComposition()
-    #keys = list(myAAcomposition.keys())
-    #keys.sort()
-    #if myAAnumber == 0: myAAnumber = 1  # handles the case where no AA are present
-    #for key in keys:
-    #    print("\t{} = {:.2%}".format(key, myAAcomposition[key] / myAAnumber))
+    print("molar Extinction coefficient: {:.2f}".format(myParamMaker.molarExtinction()))
+    print("mass Extinction coefficient: {:.2f}".format(myParamMaker.massExtinction()))
+    print("Theoretical pI: {:.2f}".format(myParamMaker.pI()))
+    print("Amino acid composition:")
+    myAAcomposition = myParamMaker.aaComposition()
+    keys = list(myAAcomposition.keys())
+    keys.sort()
+    if myAAnumber == 0: myAAnumber = 1  # handles the case where no AA are present
+    for key in keys:
+        print("\t{} = {:.2%}".format(key, myAAcomposition[key] / myAAnumber))
