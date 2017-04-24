@@ -29,7 +29,7 @@ class ProteinParam(str):
     aa2chargeNeg = {'D': 3.86, 'E': 4.25, 'C': 8.33, 'Y': 10}
     aaNterm = 9.69
     aaCterm = 2.34
-    muDictionary = {}
+    aaDictionary = {}
 
 
     # the __init__ method requires a protein string to be provided, either as a
@@ -38,51 +38,71 @@ class ProteinParam(str):
         l = ''.join(protein).split()
         self.protString = ''.join(l).upper()
 
+
     def aaCount(self):
+        """ Iterates through every character in string and returns a count of valid 
+        amino acids. Ignores invalid characters.
+        Returns:
+             aaTotal (int): Total number of valid amino acids.  
+        """
         aaTotal = 0
         for i in self:                          # Iterates through each character in string object.
-            if i.upper() in self.aa2mw.keys():  # Checks if character is valid by checking if it's in dictionary keys.
+            if i.upper() in self.aa2mw.keys():  # Checks if character is valid by checking if it's in dictionary aa2mw.
                 aaTotal += 1
         return aaTotal
 
 
-def pI(self):
-    pass
+    def pI(self):
+        pass
 
 
-def aaComposition(self):
-    pass
+    def aaComposition(self):
+        """ Constructs dictionary consisting of amino acids as keys and the count of each one as values.
+        Returns: A dictionary keyed by single letter amino acid code, having 
+        associated values that are the counts of those amino acids in the sequence.
+        """
+        for i in self.aa2mw.keys():
+            self.aaDictionary[i] = self.protString.count(i)
+        return self.aaDictionary
 
 
-def _charge_(self):
-    pass
+    def _charge_(self):
+        pass
 
 
-def molarExtinction(self):
-    pass
+    def molarExtinction(self):
+        pass
 
 
-def massExtinction(self):
-    myMW = self.molecularWeight()
-    return self.molarExtinction() / myMW if myMW else 0.0
+    def massExtinction(self):
+        myMW = self.molecularWeight()
+        return self.molarExtinction() / myMW if myMW else 0.0
 
 
-def molecularWeight(self):
-    pass
+    def molecularWeight(self):
+        """
+        Calculates the MW of the protein sequence. 
+        """
+        aaWeight = 0
+        waterMW = ProteinParam.mwH2O *(ProteinParam.aaCount(self) - 1)
+        #for aa in ProteinParam.aaDictionary:
+        #    aaWeight += (ProteinParam.aaDictionary.get(aa)*ProteinParam.aa2mw.get(aa))
 
+        for aa, count in ProteinParam.aaDictionary.items():
+            aaWeight += count * ProteinParam.aa2mw[aa]
+        return aaWeight - waterMW
 
 # Please do not modify any of the following.  This will produce a standard output that can be parsed
-
+from pprint import pprint as pp
 import sys
 
 
 for inString in sys.stdin:
     myParamMaker = ProteinParam(inString)
     myAAnumber = myParamMaker.aaCount()
-    print(myAAnumber)
-
-    #print("Number of Amino Acids: {aaNum}".format(aaNum=myAAnumber))
-    #print("Molecular Weight: {:.1f}".format(myParamMaker.molecularWeight()))
+    myAAcomposition = myParamMaker.aaComposition()
+    print("Number of Amino Acids: {aaNum}".format(aaNum=myAAnumber))
+    print("Molecular Weight: {:.1f}".format(myParamMaker.molecularWeight()))
     #print("molar Extinction coefficient: {:.2f}".format(myParamMaker.molarExtinction()))
     #print("mass Extinction coefficient: {:.2f}".format(myParamMaker.massExtinction()))
     #print("Theoretical pI: {:.2f}".format(myParamMaker.pI()))
