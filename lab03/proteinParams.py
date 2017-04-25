@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-# Carlos Barillas
-# None
+# Name: Carlos Barillas (cbarilla)
+# Group: none
 
 
 class ProteinParam(str):
@@ -35,11 +35,11 @@ class ProteinParam(str):
     # the __init__ method requires a protein string to be provided, either as a
     # string or list of strings that will be concatenated
     def __init__(self, protein):
-        l = ''.join(protein).split()
-        self.protString = ''.join(l).upper()
+        myList = ''.join(protein).split()
+        self.proteinString = ''.join(myList).upper()
         
-        for i in self.aa2mw.keys():  # Iterates through the aa2mw's keys (valid aa's)
-            self.aaDictionary[i] = self.protString.count(i)  # Each key has a count as value
+        for aa in self.aa2mw.keys():  # Iterates through the aa2mw's keys (valid aa's)
+            self.aaDictionary[aa] = self.protString.count(aa)  # Each key has a count as value
 
     def aaCount(self):
         """ Iterates through every character in string and returns a count of valid 
@@ -48,8 +48,8 @@ class ProteinParam(str):
              aaTotal (int): Total number of valid amino acids.  
         """
         aaTotal = 0
-        for i in self:                          # Iterates through each character in string object.
-            if i.upper() in self.aa2mw.keys():  # Checks if character is valid by checking if it's in dictionary aa2mw.
+        for aa in self.protString:                          # Iterates through each character in string object.
+            if aa.upper() in self.aa2mw.keys():  # Checks if character is valid by checking if it's in dictionary aa2mw.
                 aaTotal += 1
         return aaTotal
 
@@ -77,28 +77,28 @@ class ProteinParam(str):
 
     def charge(self, pH):
 
-        posValues = 0
-        for aa in ProteinParam.aa2chargePos:
-            nAA = ProteinParam.aaDictionary[aa]
-            posValues += nAA *((10**ProteinParam.aa2chargePos[aa])/(10**ProteinParam.aa2chargePos[aa]+10**pH))
-        posValues += (10**ProteinParam.aaNterm)/(10**ProteinParam.aaNterm + 10**pH)
+        posCharge = 0
+        for aa in self.aa2chargePos:
+            nAA = self.aaDictionary[aa]
+            posCharge += nAA *((10**self.aa2chargePos[aa])/(10**self.aa2chargePos[aa]+10**pH))
+        posCharge += (10**self.aaNterm)/(10**self.aaNterm + 10**pH)
 
-        negValues = 0
-        for aa in ProteinParam.aa2chargeNeg:
-            nAA = ProteinParam.aaDictionary[aa]
-            negValues += nAA * ((10**pH)/(10**ProteinParam.aa2chargeNeg[aa]+10**pH))
-        negValues += (10**pH)/(10**ProteinParam.aaCterm + 10**pH)
+        negCharge = 0
+        for aa in self.aa2chargeNeg:
+            nAA = self.aaDictionary[aa]
+            negCharge += nAA * ((10**pH)/(10**self.aa2chargeNeg[aa]+10**pH))
+        negCharge += (10**pH)/(10**self.aaCterm + 10**pH)
 
-        netCharge = abs(posValues - negValues)
+        netCharge = abs(posCharge - negCharge)
 
         return netCharge
 
     def molarExtinction(self):
-        tyrosine = ProteinParam.aaDictionary.get('Y',0) * ProteinParam.aa2abs280.get('Y',0)
-        tryptophans = ProteinParam.aaDictionary.get('W',0) * ProteinParam.aa2abs280.get('W',0)
-        cysteines = ProteinParam.aaDictionary.get('C',0) * ProteinParam.aa2abs280.get('C',0)
-        molarEC = tyrosine + tryptophans + cysteines
-        return molarEC
+        tyrosine = self.aaDictionary['Y'] * self.aa2abs280['Y']
+        tryptophans = self.aaDictionary['W'] * self.aa2abs280['W']
+        cysteines = self.aaDictionary['C'] * self.aa2abs280['C']
+        molarEx = tyrosine + tryptophans + cysteines
+        return molarEx
 
 
     def massExtinction(self):
@@ -111,13 +111,12 @@ class ProteinParam(str):
         Calculates the MW of the protein sequence. 
         """
         aaWeight = 0
-        waterMW = self.mwH2O*(self.aaCount()-1)
+        waterMW = self.mwH2O * (self.aaCount()-1)
         for aa, count in self.aaDictionary.items():
             aaWeight += (count * self.aa2mw[aa])
         return aaWeight - waterMW
 
 # Please do not modify any of the following.  This will produce a standard output that can be parsed
-from pprint import pprint as pp
 import sys
 
 for inString in sys.stdin:
