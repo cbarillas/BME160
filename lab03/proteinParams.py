@@ -46,8 +46,8 @@ class ProteinParam(str):
         print(myList)
         self.proteinString = ''.join(myList).upper()
         
-        for aa in self.aa2mw.keys(): 
-            self.aaDictionary[aa] = float(self.proteinString.count(aa))
+        for aa in self.aa2mw.keys():  # Iterates through aa2mw dictionary, the valid aa's.
+            self.aaDictionary[aa] = float(self.proteinString.count(aa)) # Stores values.
 
     def aaCount(self):
         """ Iterates through every character in string and returns a count of valid 
@@ -58,7 +58,7 @@ class ProteinParam(str):
         """
         aaTotal = 0
         for aa in self.proteinString:
-            if aa.upper() in self.aa2mw.keys():
+            if aa.upper() in self.aa2mw.keys():  # Checks if character in string is a valid aa.
                 aaTotal += 1
         return aaTotal
 
@@ -70,11 +70,11 @@ class ProteinParam(str):
         Returns:
             (float): Best pH.
         """
-        bigCharge = 2**11
+        bigCharge = 2**11  # Choose a big number, this is our loop invariant. 
         bestPH = 0
         particularPH = 0
         while particularPH < 14.01:
-            charge = self.charge(particularPH)
+            charge = abs(self.charge(particularPH))  # 0 <= charge <= 14
             if charge < bigCharge:
                 bigCharge = charge
                 bestPH = particularPH
@@ -97,20 +97,20 @@ class ProteinParam(str):
             (float): Net charge of the protein.
         """
         posCharge = 0
-        for aa in self.aa2chargePos:
+        for aa in self.aa2chargePos:  # Begin summation for posCharges.
             nAA = self.aaDictionary[aa]
-            posCharge += nAA * ((10**self.aa2chargePos[aa]) /
-            (10**self.aa2chargePos[aa] + 10**pH))
-        posCharge += (10**self.aaNterm) / (10**self.aaNterm + 10**pH)
+            posCharge += nAA * ((10**self.aa2chargePos[aa]) 
+            / (10**self.aa2chargePos[aa] + 10**pH))
+        posCharge += (10**self.aaNterm) / (10**self.aaNterm + 10**pH) # Include the Nterm to posCharge.
 
         negCharge = 0
         for aa in self.aa2chargeNeg:
             nAA = self.aaDictionary[aa]
-            negCharge += nAA * ((10**pH) /
-            (10**self.aa2chargeNeg[aa] + 10**pH))
+            negCharge += nAA * ((10**pH) 
+            / (10**self.aa2chargeNeg[aa] + 10**pH))
         negCharge += (10**pH) / (10**self.aaCterm + 10**pH)
 
-        netCharge = abs(posCharge - negCharge)
+        netCharge = posCharge - negCharge
 
         return netCharge
 
@@ -147,14 +147,15 @@ class ProteinParam(str):
             (float): Molecular weight.
         """
         aaWeight = 0
-        waterMW = self.mwH2O * (self.aaCount()-1)
-        for aa, count in self.aaDictionary.items():
-            aaWeight += (count * self.aa2mw[aa])
-        return aaWeight - waterMW
+        h2o = self.mwH2O * (self.aaCount()-1) 
+        for aa, count in self.aaDictionary.items(): 
+            aaWeight += (count * self.aa2mw[aa])  # Sums the weights of the individual aa's.
+        return aaWeight - h2o  # Excludes the h2o's released with peptide bond formation.
 
 # Please do not modify any of the following.  This will produce a standard output that can be parsed
 import sys
 
+def main():
 for inString in sys.stdin:
     myParamMaker = ProteinParam(inString)
     myAAnumber = myParamMaker.aaCount()
@@ -167,6 +168,6 @@ for inString in sys.stdin:
     myAAcomposition = myParamMaker.aaComposition()
     keys = list(myAAcomposition.keys())
     keys.sort()
-    if myAAnumber == 0: myAAnumber = 1  # handles the case where no AA are present
+    if myAAnumber == 0: myAAnumber = 1  # Handles the case where no AA are present.
     for key in keys:
         print("\t{} = {:.2%}".format(key, myAAcomposition[key]/myAAnumber))
