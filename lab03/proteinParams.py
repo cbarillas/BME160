@@ -151,7 +151,7 @@ class ProteinParam(str):
             (float): Molecular weight.
         """
         aaWeight = 0
-        h2o = self.mwH2O * (self.aaCount()-1) 
+        h2o = self.mwH2O * (self.aaCount() - 1) 
         for aa, count in self.aaDictionary.items(): 
             aaWeight += (count * self.aa2mw[aa])  # Sums the weights of the individual aa's.
         return aaWeight - h2o  # Excludes the h2o's released with peptide bond formation.
