@@ -47,7 +47,6 @@ class ProteinParam(str):
             param1 (str): String of amino acids. 
         """
         myList = ''.join(protein).split()
-        print(myList)
         self.proteinString = ''.join(myList).upper()
         
         for aa in self.aa2mw.keys():  # Iterates through aa2mw dictionary, the valid aa's.
