@@ -2,6 +2,10 @@
 # Name: Carlos Barillas (cbarilla)
 # Group: none
 
+"""
+This program calculates the physical-chemical properties of a given 
+amino acid sequence and outputs various characteristics of the sequence.
+"""
 
 class ProteinParam(str):
     """Creates a ProteinParam string object in upper case letters. 
@@ -152,22 +156,26 @@ class ProteinParam(str):
             aaWeight += (count * self.aa2mw[aa])  # Sums the weights of the individual aa's.
         return aaWeight - h2o  # Excludes the h2o's released with peptide bond formation.
 
-# Please do not modify any of the following.  This will produce a standard output that can be parsed
+
 import sys
 
 def main():
-for inString in sys.stdin:
-    myParamMaker = ProteinParam(inString)
-    myAAnumber = myParamMaker.aaCount()
-    print("Number of Amino Acids: {aaNum}".format(aaNum=myAAnumber))
-    print("Molecular Weight: {:.1f}".format(myParamMaker.molecularWeight()))
-    print("molar Extinction coefficient: {:.2f}".format(myParamMaker.molarExtinction()))
-    print("mass Extinction coefficient: {:.2f}".format(myParamMaker.massExtinction()))
-    print("Theoretical pI: {:.2f}".format(myParamMaker.pI()))
-    print("Amino acid composition:")
-    myAAcomposition = myParamMaker.aaComposition()
-    keys = list(myAAcomposition.keys())
-    keys.sort()
-    if myAAnumber == 0: myAAnumber = 1  # Handles the case where no AA are present.
-    for key in keys:
-        print("\t{} = {:.2%}".format(key, myAAcomposition[key]/myAAnumber))
+    """Takes users amino acid sequence and prints out information about it"""
+    for inString in sys.stdin:
+        myParamMaker = ProteinParam(inString)
+        myAAnumber = myParamMaker.aaCount()
+        print("Number of Amino Acids: {aaNum}".format(aaNum=myAAnumber))
+        print("Molecular Weight: {:.1f}".format(myParamMaker.molecularWeight()))
+        print("molar Extinction coefficient: {:.2f}".format(myParamMaker.molarExtinction()))
+        print("mass Extinction coefficient: {:.2f}".format(myParamMaker.massExtinction()))
+        print("Theoretical pI: {:.2f}".format(myParamMaker.pI()))
+        print("Amino acid composition:")
+        myAAcomposition = myParamMaker.aaComposition()
+        keys = list(myAAcomposition.keys())
+        keys.sort()
+        if myAAnumber == 0: myAAnumber = 1  # Handles the case where no AA are present.
+        for key in keys:
+            print("\t{} = {:.2%}".format(key, myAAcomposition[key]/myAAnumber))
+
+if __name__ == "__main__":
+    main()
