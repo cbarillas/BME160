@@ -37,7 +37,9 @@ class ProteinParam(str):
     def __init__(self, protein):
         l = ''.join(protein).split()
         self.protString = ''.join(l).upper()
-
+        
+        for i in self.aa2mw.keys():  # Iterates through the aa2mw's keys (valid aa's)
+            self.aaDictionary[i] = self.protString.count(i)  # Each key has a count as value
 
     def aaCount(self):
         """ Iterates through every character in string and returns a count of valid 
@@ -70,8 +72,6 @@ class ProteinParam(str):
         Returns: A dictionary keyed by single letter amino acid code, having 
         associated values that are the counts of those amino acids in the sequence.
         """
-        for i in self.aa2mw.keys():
-            self.aaDictionary[i] = self.protString.count(i)
         return self.aaDictionary
 
 
@@ -111,9 +111,9 @@ class ProteinParam(str):
         Calculates the MW of the protein sequence. 
         """
         aaWeight = 0
-        waterMW = ProteinParam.mwH2O * (ProteinParam.aaCount(self) - 1)
-        for aa, count in ProteinParam.aaDictionary.items():
-            aaWeight += count * ProteinParam.aa2mw[aa]
+        waterMW = self.mwH2O*(self.aaCount()-1)
+        for aa, count in self.aaDictionary.items():
+            aaWeight += (count * self.aa2mw[aa])
         return aaWeight - waterMW
 
 # Please do not modify any of the following.  This will produce a standard output that can be parsed
@@ -134,4 +134,4 @@ for inString in sys.stdin:
     keys.sort()
     if myAAnumber == 0: myAAnumber = 1  # handles the case where no AA are present
     for key in keys:
-        print("\t{} = {:.2%}".format(key, myAAcomposition[key] / myAAnumber))
+        print("\t{} = {:.2%}".format(key,float(myAAcomposition[key])/myAAnumber))
