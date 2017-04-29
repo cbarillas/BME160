@@ -30,22 +30,22 @@ class NucParams(str):
         'GUA': 'V', 'GCA': 'A', 'GAA': 'E', 'GGA': 'G',  # GxA
         'GUG': 'V', 'GCG': 'A', 'GAG': 'E', 'GGG': 'G'  # GxG
     }
-    dnaCodonTable = {key.replace('U','T'):value for key, value in rnaCodon Table.items()}
+    dnaCodonTable = {key.replace('U','T'):value for key, value in rnaCodonTable.items()}
 
     validAA = {'A': None, 'C': None, 'G': None, 'T': None, 'U': None, 'N': None}
 
+    aaDictionary = {}
+
     def __init__ (self, seq):
-        self.mySequence = seq
+        sumthin = seq.rstrip('\n').rstrip('\r')
+        self.mySequence = sumthin
 
-        #self.addSequence(sequence)
+        self.addSequence(sumthin)
 
-    def getThree(self, step):
-        return [self[start:start + step] for start in range(0, len(self), step)]
-
-    def addSequence (self, thisSequence):
-        self.newString = getThree(self,3)
-        for aa in self.newString:  # Iterates through aa2mw dictionary, the valid aa's.
-            print(aa)
+    def addSequence(self, thisSequence):
+        self.newString = getThree(self, 3)
+        for aa in self.newString:
+            self.aaDictionary[aa] = 0
 
 
     def aaComposition(self):
@@ -252,7 +252,6 @@ import sys
 
 for inString in sys.stdin:
     myParamMaker = NucParams(inString)
-    n = myParamMaker.getThree(3)
-    myParamMaker.addSequence(n)
-
+    myParamMaker.addSequence(inString)
+    print(myParamMaker.aaDictionary)
 
