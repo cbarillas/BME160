@@ -2,8 +2,10 @@
 # Name: Carlos Barillas (cbarilla)
 # Group: none
 
+def getThree(myString, step):
+    return [myString[start:start+step] for start in range(0, len(myString), step)]
 
-class NucParams:
+class NucParams(str):
 
     rnaCodonTable = {
                     # RNA codon table
@@ -28,19 +30,31 @@ class NucParams:
         'GUA': 'V', 'GCA': 'A', 'GAA': 'E', 'GGA': 'G',  # GxA
         'GUG': 'V', 'GCG': 'A', 'GAG': 'E', 'GGG': 'G'  # GxG
     }
-    dnaCodonTable = {key.replace('U','T'):value for key, value in rnaCodonTable.items()}
- 
-    def __init__ (self):
-        pass
+    dnaCodonTable = {key.replace('U','T'):value for key, value in rnaCodon Table.items()}
+
+    validAA = {'A': None, 'C': None, 'G': None, 'T': None, 'U': None, 'N': None}
+
+    def __init__ (self, seq):
+        self.mySequence = seq
+
+        #self.addSequence(sequence)
+
+    def getThree(self, step):
+        return [self[start:start + step] for start in range(0, len(self), step)]
+
     def addSequence (self, thisSequence):
-        pass
+        self.newString = getThree(self,3)
+        for aa in self.newString:  # Iterates through aa2mw dictionary, the valid aa's.
+            print(aa)
+
+
     def aaComposition(self):
         pass
-     def nucComposition(self):
+    def nucComposition(self):
         pass
-     def codonComposition(self):
+    def codonComposition(self):
         pass
-     def nucCount(self):
+    def nucCount(self):
         pass
 
 
@@ -233,9 +247,12 @@ class FastAreader :
  
                  
         yield header,sequence
- 
- 
-# presumed object instantiation and example usage
-# myReader = FastAreader ('testGenome.fa');
-# for head, seq in myReader.readFasta() :
-#     print (head,seq)
+
+import sys
+
+for inString in sys.stdin:
+    myParamMaker = NucParams(inString)
+    n = myParamMaker.getThree(3)
+    myParamMaker.addSequence(n)
+
+
