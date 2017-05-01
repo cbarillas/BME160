@@ -2,9 +2,6 @@
 # Name: Carlos Barillas (cbarilla)
 # Group: none
 
-def getThree(myString, step):
-    return [myString[start:start+step] for start in range(0, len(myString), step)]
-
 class NucParams(str):
 
     rnaCodonTable = {
@@ -34,22 +31,24 @@ class NucParams(str):
 
     validAA = {'A': None, 'C': None, 'G': None, 'T': None, 'U': None, 'N': None}
 
-    aaDictionary = {}
+    codonDictionary = {}
+    codonComp = {}
 
     def __init__ (self, seq):
-        sumthin = seq.rstrip('\n').rstrip('\r')
-        self.mySequence = sumthin
+        self.addSequence(seq)
 
-        self.addSequence(sumthin)
 
     def addSequence(self, thisSequence):
-        self.newString = getThree(self, 3)
-        for aa in self.newString:
-            self.aaDictionary[aa] = 0
-
+        myList = [seq[start:start+3] for start in range(0, len(seq), 3)  # Makes a list of codons given seq
+            self.mySequence = myList
+            self.codonDictionary[codon] = self.dnaCodonTable[codon]
 
     def aaComposition(self):
-        pass
+        aaList = list(self.codonDictionary.values())
+        for aa in ProteinParam.aa2mw.keys():
+            self.codonComp[aa] = aaList.count(aa)
+
+
     def nucComposition(self):
         pass
     def codonComposition(self):
@@ -248,10 +247,10 @@ class FastAreader :
                  
         yield header,sequence
 
-import sys
+myReader = FastAreader('testGenome.fa');
+for head, seq in myReader.readFasta():
+    myParamMaker = NucParams(seq)
 
-for inString in sys.stdin:
-    myParamMaker = NucParams(inString)
-    myParamMaker.addSequence(inString)
-    print(myParamMaker.aaDictionary)
-
+#myParamMaker.aaComposition()
+#print(myParamMaker.codonDictionary)
+#print(myParamMaker.codonComp)
