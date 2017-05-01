@@ -1,16 +1,15 @@
 import sequenceAnalysis
 
-class GeonomeAnalyzer:
+class GenomeAnalyzer:
 
     def __init__(self):
-        self.readObject = SA.FastaReader('testGenome.fa')
-        self.genome = SA.NucParams()
+        self.fastaFile = sequenceAnalysis.FastAreader('testGenome.fa')
+        self.sequence = sequenceAnalysis.NucParams()
 
 
     def analyze(self):
-        for head, seq in self.readObject:
-            self.genome.addSequence(seq)
-        gc = self.genome.nucDict('G')+self.genome.nucDict('C')
+        for head, seq in fas:
+            self.sequence.addSequence()
 
 
 
