@@ -40,8 +40,8 @@ class NucParams(str):
 
     def addSequence(self, thisSequence):
         myList = [seq[start:start+3] for start in range(0, len(seq), 3)  # Makes a list of codons given seq
-            self.mySequence = myList
-            self.codonDictionary[codon] = self.dnaCodonTable[codon]
+        self.mySequence = myList
+        self.codonDictionary[codon] = self.dnaCodonTable[codon]
 
     def aaComposition(self):
         aaList = list(self.codonDictionary.values())
