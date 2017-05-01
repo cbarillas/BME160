@@ -1,3 +1,4 @@
+import sequenceAnalysis
 
 class GeonomeAnalyzer:
 

@@ -31,17 +31,23 @@ class NucParams(str):
 
     validAA = {'A': None, 'C': None, 'G': None, 'T': None, 'U': None, 'N': None}
 
-    codonDictionary = {}
-    codonComp = {}
-
     def __init__ (self, seq):
+        self.codonDictionary = {}
+        self.aminoAcidComposition = {}
+        self.nucComposition = {}
+        self.codonComposition = {}
+
+        myList = [seq[start:start + 3] for start in range(0, len(seq), 3)]  # Makes a list of codons given seq
+        for codon in myList:
+            self.codonDictionary[codon] = 0
+
         self.addSequence(seq)
 
 
     def addSequence(self, thisSequence):
-        myList = [seq[start:start+3] for start in range(0, len(seq), 3)  # Makes a list of codons given seq
-        self.mySequence = myList
-        self.codonDictionary[codon] = self.dnaCodonTable[codon]
+        anotherOne = [thisSequence[start:start + 3] for start in range(0, len(thisSequence), 3)]
+        for codon in anotherOne:
+            self.codonDictionary[codon] = self.dnaCodonTable[codon]
 
     def aaComposition(self):
         aaList = list(self.codonDictionary.values())
@@ -248,9 +254,11 @@ class FastAreader :
         yield header,sequence
 
 myReader = FastAreader('testGenome.fa');
+
 for head, seq in myReader.readFasta():
     myParamMaker = NucParams(seq)
+    myParamMaker.addSequence(seq)
 
 #myParamMaker.aaComposition()
-#print(myParamMaker.codonDictionary)
+print(myParamMaker.codonDictionary)
 #print(myParamMaker.codonComp)
