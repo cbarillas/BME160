@@ -37,10 +37,19 @@ class NucParams:
         self.nucComposition = {}
         self.codonComposition = {}
 
-        for codon in self.dnaCodonTable:
+        for codon, aa in self.dnaCodonTable.items():
             self.codonDictionary[codon] = 0
 
+        for aa in ProteinParam.aa2mw.keys():
+            self.aminoAcidComposition[aa] = 0
+
+        for codon, aa in
+
+    def tanslateCodon(self, codon):
+        return self.dnaCodonTable[codon]
+
     def addSequence(self, thisSequence):
+        print(len(thisSequence))
         for start in range(0, len(thisSequence), 3):
             newCodon = thisSequence[start:start+3]
             self.codonDictionary[newCodon] = 0
@@ -248,3 +257,9 @@ class FastAreader:
  
                  
         yield header,sequence
+
+myReader = FastAreader ('testGenome.fa')
+myParamMaker = NucParams()
+for head, seq in myReader.readFasta():
+    myParamMaker.addSequence(seq)
+print(myParamMaker.codonDictionary)
