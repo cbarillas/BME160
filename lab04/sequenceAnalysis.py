@@ -32,30 +32,40 @@ class NucParams:
     validAA = {'A': None, 'C': None, 'G': None, 'T': None, 'U': None, 'N': None}
 
     def __init__(self):
-        self.codonDictionary = {}
+        """
+        Initializes dictionaries.
+        """
         self.aminoAcidComposition = {}
-        self.nucComposition = {}
         self.codonComposition = {}
+        self.nucComposition = {}
+        self.codonDictionary = {}
 
-        for codon, aa in self.dnaCodonTable.items():
-            self.codonDictionary[codon] = 0
-
-        for aa in ProteinParam.aa2mw.keys():
+        for aa in ProteinParam.aa2mw:
             self.aminoAcidComposition[aa] = 0
 
-        for codon, aa in
+        for codon in self.rnaCodonTable:
+            self.codonComposition[codon] = 0
 
-    def tanslateCodon(self, codon):
-        return self.dnaCodonTable[codon]
+        for codon in self.dnaCodonTable:
+            self.nucComposition[codon] = 0
+
 
     def addSequence(self, thisSequence):
-        print(len(thisSequence))
+        """
+        Adds new genome sequence to dictionaries.
+        :param thisSequence:
+        :return:
+        """
         for start in range(0, len(thisSequence), 3):
-            newCodon = thisSequence[start:start+3]
-            self.codonDictionary[newCodon] = 0
+            codon = thisSequence[start: start + 3]
+            self.codonDictionary[codon] = 0
+
+        self.nucComposition.update(self.codonDictionary)
 
     def aaComposition(self):
-        aaList = list(self.codonDictionary.values())
+        """
+        This method will return a dictionary of counts over the 20 amino acids.
+        """
         for aa in ProteinParam.aa2mw.keys():
             self.codonComp[aa] = aaList.count(aa)
 
@@ -258,8 +268,12 @@ class FastAreader:
                  
         yield header,sequence
 
-myReader = FastAreader ('testGenome.fa')
+myReader = FastAreader('testGenome.fa')
 myParamMaker = NucParams()
 for head, seq in myReader.readFasta():
     myParamMaker.addSequence(seq)
-print(myParamMaker.codonDictionary)
+
+print (myParamMaker.aminoAcidComposition)
+print(myParamMaker.nucComposition)
+print (myParamMaker.codonDictionary)
+print (myParamMaker.codonComposition)
