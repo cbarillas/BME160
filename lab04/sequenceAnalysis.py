@@ -25,7 +25,7 @@ class NucParams:
         'GUU': 'V', 'GCU': 'A', 'GAU': 'D', 'GGU': 'G',  # GxU
         'GUC': 'V', 'GCC': 'A', 'GAC': 'D', 'GGC': 'G',  # GxC
         'GUA': 'V', 'GCA': 'A', 'GAA': 'E', 'GGA': 'G',  # GxA
-        'GUG': 'V', 'GCG': 'A', 'GAG': 'E', 'GGG': 'G'  # GxG
+        'GUG': 'V', 'GCG': 'A', 'GAG': 'E', 'GGG': 'G'   # GxG
     }
     dnaCodonTable = {key.replace('U','T'):value for key, value in rnaCodonTable.items()}
 
@@ -49,33 +49,57 @@ class NucParams:
         for codon in self.dnaCodonTable:
             self.nucComposition[codon] = 0
 
-
     def addSequence(self, thisSequence):
         """
         Adds new genome sequence to dictionaries.
         :param thisSequence:
         :return:
         """
+
+        rnaSequence = thisSequence.replace('T', 'U')
+
         for start in range(0, len(thisSequence), 3):
             codon = thisSequence[start: start + 3]
-            self.codonDictionary[codon] = 0
+            if codon in self.dnaCodonTable:
+                self.nucComposition[codon] += 1  # dna dictionary w/ count
 
-        self.nucComposition.update(self.codonDictionary)
+        for start in range(0, len(rnaSequence), 3):
+            codon = rnaSequence[start: start + 3]
+            if codon in self.rnaCodonTable:
+                self.codonComposition[codon] += 1  # rna dictionary w/ count
+                aa = self.rnaCodonTable[codon]
+                if aa != '-':
+                    self.aminoAcidComposition[aa] += 1  # aa dictionary w/ count
+
 
     def aaComposition(self):
         """
         This method will return a dictionary of counts over the 20 amino acids.
         """
-        for aa in ProteinParam.aa2mw.keys():
-            self.codonComp[aa] = aaList.count(aa)
-
+        return self.aminoAcidComposition
 
     def nucComposition(self):
-        pass
+        """
+        Returns the updated nucleotide composition dictionary from addSequence.
+        """
+        return self.nucComposition
+
     def codonComposition(self):
-        pass
+        """
+        This dictionary returns counts of codons.
+        :return: 
+        """
+        return self.codonComposition
+
     def nucCount(self):
-        pass
+        """
+        This returns an integer value, summing every valid nucleotide found. This 
+        value should exactly equal the sum over the nucleotide composition dictionary. 
+        """
+        nucTotal = 0
+        for codon, count in self.nucComposition.items():
+            nucTotal += count
+        return nucTotal
 
 
 class ProteinParam(str):
@@ -268,12 +292,18 @@ class FastAreader:
                  
         yield header,sequence
 
-myReader = FastAreader('testGenome.fa')
-myParamMaker = NucParams()
-for head, seq in myReader.readFasta():
-    myParamMaker.addSequence(seq)
+def main():
+    """
+    This main is used to test my NucParams class and FastAreader class.
+    :return: 
+    """
+    myReader = FastAreader('testGenome.fa')
+    myParamMaker = NucParams()
+    for head, seq in myReader.readFasta():
+        myParamMaker.addSequence(seq)
 
-print (myParamMaker.aminoAcidComposition)
-print(myParamMaker.nucComposition)
-print (myParamMaker.codonDictionary)
-print (myParamMaker.codonComposition)
+    print(myParamMaker.aminoAcidComposition)
+    print(myParamMaker.nucComposition)
+    print(myParamMaker.codonComposition)
+    print(myParamMaker.nucCount())
+main()
