@@ -29,7 +29,7 @@ class NucParams:
     }
     dnaCodonTable = {key.replace('U','T'):value for key, value in rnaCodonTable.items()}
 
-    validAA = {'A': None, 'C': None, 'G': None, 'T': None, 'U': None, 'N': None}
+    validNucleotides = {'A': None, 'C': None, 'G': None, 'T': None, 'U': None, 'N': None}
 
     def __init__(self):
         """
@@ -46,8 +46,8 @@ class NucParams:
         for codon in self.rnaCodonTable:
             self.codonComposition[codon] = 0
 
-        for codon in self.dnaCodonTable:
-            self.nucComposition[codon] = 0
+        for nuc in self.validNucleotides:
+            self.nucComposition[nuc] = 0
 
     def addSequence(self, thisSequence):
         """
@@ -56,12 +56,10 @@ class NucParams:
         :return:
         """
 
-        rnaSequence = thisSequence.replace('T', 'U')
+        for nuc in thisSequence:
+            self.nucComposition[nuc] += thisSequence.count(nuc)
 
-        for start in range(0, len(thisSequence), 3):
-            codon = thisSequence[start: start + 3]
-            if codon in self.dnaCodonTable:
-                self.nucComposition[codon] += 1  # dna dictionary w/ count
+        rnaSequence = thisSequence.replace('T', 'U')
 
         for start in range(0, len(rnaSequence), 3):
             codon = rnaSequence[start: start + 3]
