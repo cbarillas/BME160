@@ -3,6 +3,13 @@
 # Group: none
 
 class NucParams:
+    """Creates dictionaries to store fasta file information.
+
+        Attributes:
+            attr1 (dict): Dictionary of RNA codons.
+            attr2 (dict): Dictionary of DNA codons.
+            attr3 (dict): Dictionary of valid Nucleotides.
+    """
 
     rnaCodonTable = {
                     # RNA codon table
@@ -27,47 +34,46 @@ class NucParams:
         'GUA': 'V', 'GCA': 'A', 'GAA': 'E', 'GGA': 'G',  # GxA
         'GUG': 'V', 'GCG': 'A', 'GAG': 'E', 'GGG': 'G'   # GxG
     }
+
     dnaCodonTable = {key.replace('U','T'):value for key, value in rnaCodonTable.items()}
 
-    validNucleotides = {'A': None, 'C': None, 'G': None, 'T': None, 'U': None, 'N': None}
+    validNucleotides = {'A': 0, 'C': 0, 'G': 0, 'T': 0, 'U': 0, 'N': 0}
 
     def __init__(self):
         """
-        Initializes dictionaries.
+        Initializes dictionaries with appropriate keys, and values set to zero.
         """
         self.aminoAcidComposition = {}
         self.codonComposition = {}
         self.nucComposition = {}
-        self.codonDictionary = {}
 
-        for aa in ProteinParam.aa2mw:
+        for aa in ProteinParam.aa2mw:  # Initializes Amino Acid dictionary.
             self.aminoAcidComposition[aa] = 0
 
-        for codon in self.rnaCodonTable:
+        for codon in self.rnaCodonTable:  # Initializes Codon Composition dictionary.
             self.codonComposition[codon] = 0
 
-        for nuc in self.validNucleotides:
+        for nuc in self.validNucleotides:  # Initializes Nucleotide Composition dictionary.
             self.nucComposition[nuc] = 0
 
     def addSequence(self, thisSequence):
         """
-        Adds new genome sequence to dictionaries.
-        :param thisSequence:
-        :return:
+        This method accepts additional sequences and adds the data that you were given
+        with the __init__ method.
         """
-
         for nuc in thisSequence:
-            self.nucComposition[nuc] += thisSequence.count(nuc)
+            if nuc in self.validNucleotides.keys():  # Checks if each nucleotide is valid.
+                self.nucComposition[nuc] += thisSequence.count(nuc)  # Counts how many nucleotides there are.
 
-        rnaSequence = thisSequence.replace('T', 'U')
+        rnaSequence = thisSequence.replace('T', 'U')  # Converts DNA sequence to RNA
 
         for start in range(0, len(rnaSequence), 3):
             codon = rnaSequence[start: start + 3]
             if codon in self.rnaCodonTable:
-                self.codonComposition[codon] += 1  # rna dictionary w/ count
+                self.codonComposition[codon] += 1  # Adds RNA sequence to dictionary w/ count.
                 aa = self.rnaCodonTable[codon]
                 if aa != '-':
-                    self.aminoAcidComposition[aa] += 1  # aa dictionary w/ count
+                    self.aminoAcidComposition[aa] += 1  # Adds amino acid to dictionary w/ count.
 
 
     def aaComposition(self):
@@ -84,8 +90,7 @@ class NucParams:
 
     def codonComposition(self):
         """
-        This dictionary returns counts of codons.
-        :return: 
+        This dictionary returns codons in RNA format and counts of codon.
         """
         return self.codonComposition
 
@@ -95,7 +100,7 @@ class NucParams:
         value should exactly equal the sum over the nucleotide composition dictionary. 
         """
         nucTotal = 0
-        for codon, count in self.nucComposition.items():
+        for count in self.nucComposition.values():
             nucTotal += count
         return nucTotal
 

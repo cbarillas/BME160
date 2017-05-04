@@ -1,4 +1,4 @@
-import sequenceAnalysis
+
 
 class GenomeAnalyzer:
 
@@ -7,13 +7,13 @@ class GenomeAnalyzer:
         self.sequence = sequenceAnalysis.NucParams()
 
     def analyze(self):
-        pass
+
         for head, seq in fas:
             self.sequence.addSequence()
 
 
 
 def main():
-    #fred = GenomeAnalyzer()
-    #fred.analyze()
+    fred = GenomeAnalyzer()
+    fred.analyze()
 main()
