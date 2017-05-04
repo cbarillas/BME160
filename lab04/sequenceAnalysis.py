@@ -294,19 +294,3 @@ class FastAreader:
  
                  
         yield header,sequence
-
-def main():
-    """
-    This main is used to test my NucParams class and FastAreader class.
-    :return: 
-    """
-    myReader = FastAreader('testGenome.fa')
-    myParamMaker = NucParams()
-    for head, seq in myReader.readFasta():
-        myParamMaker.addSequence(seq)
-
-    print(myParamMaker.aminoAcidComposition)
-    print(myParamMaker.nucComposition)
-    print(myParamMaker.codonComposition)
-    print(myParamMaker.nucCount())
-main()
