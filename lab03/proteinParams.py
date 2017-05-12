@@ -35,7 +35,7 @@ class ProteinParam(str):
     aa2chargeNeg = {'D': 3.86, 'E': 4.25, 'C': 8.33, 'Y': 10}
     aaNterm = 9.69
     aaCterm = 2.34
-    aaDictionary = {}
+
 
     def __init__(self, protein):
         """Takes in sequence from users input then creates a list of 
@@ -48,6 +48,7 @@ class ProteinParam(str):
         """
         myList = ''.join(protein).split()
         self.proteinString = ''.join(myList).upper()
+        self.aaDictionary = {}
         
         for aa in self.aa2mw.keys():  # Iterates through aa2mw dictionary, the valid aa's.
             self.aaDictionary[aa] = float(self.proteinString.count(aa)) # Stores values.
@@ -77,7 +78,7 @@ class ProteinParam(str):
         bestPH = 0
         particularPH = 0
         while particularPH < 14.01:
-            charge = abs(self.charge(particularPH))  # 0 <= charge <= 14
+            charge = abs(self.__charge__(particularPH))  # 0 <= charge <= 14
             if charge < bigCharge:
                 bigCharge = charge
                 bestPH = particularPH
@@ -91,7 +92,7 @@ class ProteinParam(str):
         """
         return self.aaDictionary
 
-    def charge(self, pH):
+    def __charge__(self, pH):
         """Calculates the net charge on the protein at specific pH using pKa of each
         charged amino acid, Nterminus and Cterminus.
         Args:
@@ -117,7 +118,7 @@ class ProteinParam(str):
 
         return netCharge
 
-    def molarExtinction(self):
+    def molarExtinction(self, Cysteine = True):
         """Estimates the molar extinction coefficient based on the number
         of tyrosines, tryptophans, cysteines and their extinction 
         coefficient at 280nm which can be found in dictionary(aa2abs280).
@@ -131,7 +132,7 @@ class ProteinParam(str):
         molarEx = tyrosine + tryptophans + cysteines
         return molarEx
 
-    def massExtinction(self):
+    def massExtinction(self, Cysteine = True):
         """Computes mass extinction by dividing molar extinction
         by the molecular weight of corresponding protein.
 
