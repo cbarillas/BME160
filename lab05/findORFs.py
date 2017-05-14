@@ -51,16 +51,17 @@ class CommandLine():
 
 
 class OrfFinder():
+
     def __init__(self, seq):
-        self.seq = seg
+        self.seq = seq
 
     def findOrfs(self):
         ''' 
         find Orfs on top strand and return list of Orfs
 
         remember to handle the dangling start and stop cases
-
         '''
+
 
     pass
 
@@ -74,6 +75,7 @@ class OrfFinder():
         pass
 
     def saveOrf(self, start, stop, length, frame):
+
         pass
 
 
