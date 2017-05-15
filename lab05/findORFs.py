@@ -58,53 +58,131 @@ class OrfFinder():
 
     def __init__(self, seq):
         self.seq = seq
+        self.orfs=[]
 
     def findOrfs(self):
-        ''' 
+        """
         find Orfs on top strand and return list of Orfs
 
         remember to handle the dangling start and stop cases
-        '''
+        """
         start_positions = []
-        stop_positions = []
-        orfs = []
-        start_pos = 0
-        stop_pos = 0
-        
+        foundStart = 0
+        foundCodon = 0
+
         for frame in range(0,3):  # We need to check for frames 1, 2, 3
+            foundStart = 0        # Flag name for when finding codons and start codons.
+            foundCodon = 0
+            start_positions = []  # Clears the start position list for each frame.
             for i in range(frame, len(self.seq), 3):
                 codon = self.seq[i:i+3]  # The codon is 3 nucleotides.
-                #print(codon)
-                if codon == 'ATG':
-                    start_pos = i
-                    start_positions.append([codon, i])
+                if codon == 'ATG':  # When start codon is found.
+                    start_positions.append(i)
+                    foundStart = 1
+                    foundCodon = 1
                 
-                if codon in OrfFinder.stop_codons:
-                    stop_pos = i
-                    stop_positions.append([codon, i])
-                    length = stop_pos - start_pos
-            
-                
-        print('start:',start_positions)
-        print('stop:', stop_positions)
-        print(orfs)
+                if codon in OrfFinder.stop_codons and foundStart:
+                    start = start_positions[0]
+                    stop = i
+                    length = stop - start
+                    self.saveOrf(start,stop,length,frame)
+                    start_positions = []
+                    foundStart = 0
+                    foundCodon = 1
 
-    def reverse_complement(self):
+                if foundCodon == 0 and codon in OrfFinder.stop_codons:  # If no start codon was found but stop codon found.
+                    print("dangling stop at 5' end")
+                    start = 0
+                    stop = i
+                    length = stop - start
+                    self.saveOrf(start, stop, length, frame)
+                    start_positions = []
+                    foundCodon = 1
+
+            if foundStart:  # If no stop codon was found but start codon found.
+                start = start_positions[0]
+                stop = len(self.seq)
+                length = stop - start
+                self.saveOrf(start, stop, length, frame)
+                print("dangling start at 3' end")
+
+
+
+
+            
+        print(self.orfs)
+
+    def reverseComp(self):
+        """ Helper method to take the complement of a DNA seqeunce.
+        :return: Complement of DNA.
+        """
         return ''.join([self.complement[base] for base in self.seq[::-1]])  # Dictionary comprehenesion to find complement of DNA sequence.
 
     def findRevOrfs(self):
         ''' 
         find Orfs on the bottom strand and return that list of Orfs
 
-        remember to fixup the orfList so that it r	efers to top strand coordinates and the rev frames
+        remember to fixup the orfList so that it refers to top strand coordinates and the rev frames
 
         '''
-        complement = reverse_complement(self.seq)
-        pass
+        comp = self.reverseComp()
+        start_positions = []
+        foundStart = 0
+        foundCodon = 0
+
+        for frame in range(0, 3):  # We need to check for frames 1, 2, 3
+            foundStart = 0  # Flag name for when finding codons and start codons.
+            foundCodon = 0
+            start_positions = []  # Clears the start position list for each frame.
+            for i in range(frame, len(comp), 3):
+                codon = comp[i:i + 3]  # The codon is 3 nucleotides.
+                if codon == 'ATG':  # When start codon is found.
+                    start_positions.append(i)
+                    foundStart = 1
+                    foundCodon = 1
+
+                if codon in OrfFinder.stop_codons and foundStart:
+                    start = start_positions[0]
+                    stop = i
+                    length = stop - start
+                    self.saveOrf(start, stop, length, frame)
+                    start_positions = []
+                    foundStart = 0
+                    foundCodon = 1
+
+                if foundCodon == 0 and codon in OrfFinder.stop_codons:  # If no start codon was found but stop codon found.
+                    print("dangling stop at 5' end")
+                    start = 0
+                    stop = i
+                    length = stop - start
+                    self.saveOrf(start, stop, length, frame)
+                    start_positions = []
+                    foundCodon = 1
+
+            if foundStart:  # If no stop codon was found but start codon found.
+                start = start_positions[0]
+                stop = len(comp)
+                length = stop - start
+                self.saveOrf(start, stop, length, frame)
+                print("dangling start at 3' end")
+        print(self.orfs)
 
     def saveOrf(self, start, stop, length, frame):
+        """ Saves the information about the ORF that was found.
+        This method is used in findOrfs and findRevOrfs.
+        :param start: Start position.
+        :param stop: Stop position.
+        :param length: Length of my Orf. (Stop - Start)
+        :param frame: Which frame my Orf was found in.
+        :return: A list of lists of Orfs with their appropriate information.
+        """
+        self.orfs.append([start, stop, length, frame])
 
-        pass
+    def print(self):
+        """ Helper Method to print out my list of Orfs.
+        :return:
+        """
+        print(self.orfs)
 
 
 ########################################################################
@@ -120,10 +198,12 @@ def main(myCommandLine=None):
     Implements the Usage exception handler that can be raised from anywhere in process.  
 
     '''
-    orf = OrfFinder('ACTAAGG')
-    orf.findOrfs()
-    orfc = orf.reverse_complement()
-    print(orfc)
+    seq = OrfFinder('AAAATGAAAAAAAAATGA')
+    print(seq.seq)
+    seq.findOrfs()
+    seq.findRevOrfs()
+    orfc = seq.reverseComp()
+    print('Complement of DNA sequence:', orfc)
 
 
 
