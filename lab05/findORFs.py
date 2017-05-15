@@ -51,6 +51,10 @@ class CommandLine():
 
 
 class OrfFinder():
+    
+    stop_codons = ['TGA', 'TAG', 'TAA']
+    start_codons = ['ATG']
+    complement = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A'}
 
     def __init__(self, seq):
         self.seq = seq
@@ -61,9 +65,32 @@ class OrfFinder():
 
         remember to handle the dangling start and stop cases
         '''
+        start_positions = []
+        stop_positions = []
+        orfs = []
+        start_pos = 0
+        stop_pos = 0
+        
+        for frame in range(0,3):  # We need to check for frames 1, 2, 3
+            for i in range(frame, len(self.seq), 3):
+                codon = self.seq[i:i+3]  # The codon is 3 nucleotides.
+                #print(codon)
+                if codon == 'ATG':
+                    start_pos = i
+                    start_positions.append([codon, i])
+                
+                if codon in OrfFinder.stop_codons:
+                    stop_pos = i
+                    stop_positions.append([codon, i])
+                    length = stop_pos - start_pos
+            
+                
+        print('start:',start_positions)
+        print('stop:', stop_positions)
+        print(orfs)
 
-
-    pass
+    def reverse_complement(self):
+        return ''.join([self.complement[base] for base in self.seq[::-1]])  # Dictionary comprehenesion to find complement of DNA sequence.
 
     def findRevOrfs(self):
         ''' 
@@ -72,6 +99,7 @@ class OrfFinder():
         remember to fixup the orfList so that it r	efers to top strand coordinates and the rev frames
 
         '''
+        complement = reverse_complement(self.seq)
         pass
 
     def saveOrf(self, start, stop, length, frame):
@@ -92,6 +120,17 @@ def main(myCommandLine=None):
     Implements the Usage exception handler that can be raised from anywhere in process.  
 
     '''
+    orf = OrfFinder('ACTAAGG')
+    orf.findOrfs()
+    orfc = orf.reverse_complement()
+    print(orfc)
+
+
+
+
+
+
+    
     if myCommandLine is None:
         myCommandLine = CommandLine(['tass2.fa',
                                      'tass2ORFdata-ATG-100.txt',
