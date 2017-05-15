@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
-
-
 ########################################################################
 # CommandLine
 ########################################################################
 class CommandLine():
-    '''
+    """
     Handle the command line, usage and help requests.
 
     CommandLine uses argparse, now standard in 2.7 and beyond. 
@@ -18,15 +16,13 @@ class CommandLine():
     For example, if myCommandLine is an object of the class, and requiredbool was
     set as an option using add_argument, then myCommandLine.args.requiredbool will
     name that option.
-
-    '''
-
+    """
     def __init__(self, inOpts=None):
-        '''
-        CommandLine constructor.
+        """
+         CommandLine constructor.
         Implements a parser to interpret the command line argv string using argparse.
-        '''
-
+        :param inOpts: 
+        """
         import argparse
         self.parser = argparse.ArgumentParser(
             description='Program prolog - a brief description of what this thing does',
@@ -35,11 +31,9 @@ class CommandLine():
             prefix_chars='-',
             usage='%(prog)s [options] -option1[default] <input >output'
             )
-        self.parser.add_argument('inFile', action='store', help='input file name')
-        self.parser.add_argument('outFile', action='store', help='output file name')
-        self.parser.add_argument('-lG', '--longestGene', action='store', nargs='?', const=True, default=True,
+        self.parser.add_argument('-lG', '--longestGene', action='store', nargs='?', const=True, default=False,
                                  help='longest Gene in an ORF')
-        self.parser.add_argument('-mG', '--minGene', type=int, choices=range(0, 2000), action='store',
+        self.parser.add_argument('-mG', '--minGene', type=int, choices=(100, 200, 300, 500, 1000), action='store',
                                  help='minimum Gene length')
         self.parser.add_argument('-s', '--start', action='append', nargs='?',
                                  help='start Codon')  # allows multiple list options
@@ -49,21 +43,18 @@ class CommandLine():
         else:
             self.args = self.parser.parse_args(inOpts)
 
-
 class OrfFinder():
-    
     stop_codons = ['TGA', 'TAG', 'TAA']
     start_codons = ['ATG']
     complement = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A'}
 
     def __init__(self, seq):
         self.seq = seq
-        self.orfs=[]
+        self.orfs = []
 
     def findOrfs(self):
         """
         find Orfs on top strand and return list of Orfs
-
         remember to handle the dangling start and stop cases
         """
         start_positions = []
@@ -91,7 +82,7 @@ class OrfFinder():
                     foundCodon = 1
 
                 if foundCodon == 0 and codon in OrfFinder.stop_codons:  # If no start codon was found but stop codon found.
-                    print("dangling stop at 5' end")
+                    #print("dangling stop at 5' end")
                     start = 0
                     stop = i
                     length = stop - start
@@ -99,18 +90,13 @@ class OrfFinder():
                     start_positions = []
                     foundCodon = 1
 
-            if foundStart:  # If no stop codon was found but start codon found.
+            if foundStart:  # If no stop codon was found but start codon was found.
                 start = start_positions[0]
                 stop = len(self.seq)
                 length = stop - start
                 self.saveOrf(start, stop, length, frame)
-                print("dangling start at 3' end")
-
-
-
-
-            
-        print(self.orfs)
+                #print("dangling start at 3' end")
+        return self.orfs
 
     def reverseComp(self):
         """ Helper method to take the complement of a DNA seqeunce.
@@ -119,12 +105,10 @@ class OrfFinder():
         return ''.join([self.complement[base] for base in self.seq[::-1]])  # Dictionary comprehenesion to find complement of DNA sequence.
 
     def findRevOrfs(self):
-        ''' 
-        find Orfs on the bottom strand and return that list of Orfs
-
+        """ Find Orfs on the bottom strand and return that list of Orfs
         remember to fixup the orfList so that it refers to top strand coordinates and the rev frames
-
-        '''
+        :return: 
+        """
         comp = self.reverseComp()
         start_positions = []
         foundStart = 0
@@ -151,7 +135,7 @@ class OrfFinder():
                     foundCodon = 1
 
                 if foundCodon == 0 and codon in OrfFinder.stop_codons:  # If no start codon was found but stop codon found.
-                    print("dangling stop at 5' end")
+                    #print("Dangling stop at 5' end.")
                     start = 0
                     stop = i
                     length = stop - start
@@ -159,13 +143,13 @@ class OrfFinder():
                     start_positions = []
                     foundCodon = 1
 
-            if foundStart:  # If no stop codon was found but start codon found.
+            if foundStart:  # If no stop codon was found but start codon was found.
                 start = start_positions[0]
                 stop = len(comp)
                 length = stop - start
                 self.saveOrf(start, stop, length, frame)
-                print("dangling start at 3' end")
-        print(self.orfs)
+                #print("Dangling start at 3' end.")
+        return self.orfs
 
     def saveOrf(self, start, stop, length, frame):
         """ Saves the information about the ORF that was found.
@@ -188,50 +172,31 @@ class OrfFinder():
 ########################################################################
 # Main
 # Here is the main program
-#
-#
 ########################################################################
-
-
 def main(myCommandLine=None):
-    '''
-    Implements the Usage exception handler that can be raised from anywhere in process.  
-
-    '''
-    seq = OrfFinder('AAAATGAAAAAAAAATGA')
+    """
+    Implements the Usage exception handler that can be raised from anywhere in process. 
+    """
+    seq = OrfFinder('AAAATGAAAAAATCAAAATGAAAAAAATACAAAAAA')
     print(seq.seq)
     seq.findOrfs()
     seq.findRevOrfs()
-    orfc = seq.reverseComp()
-    print('Complement of DNA sequence:', orfc)
+    print(seq.orfs)
 
-
-
-
-
-
-    
     if myCommandLine is None:
-        myCommandLine = CommandLine(['tass2.fa',
-                                     'tass2ORFdata-ATG-100.txt',
-                                     '--longestGene',
-                                     '--start=ATG',
-                                     '--minGene=100'])
+        myCommandLine = CommandLine()
     else:
         myCommandLine = CommandLine(myCommandLine)
         ###### replace the code between comments.
-        # myCommandLine.args.inFile has the input file name
+        # myCommandLine.args.inFile = 'tass2.fa'
         # myCommandLine.args.outFile has the output file name
         # myCommandLine.args.longestGene is True if only the longest Gene is desired
         # myCommandLine.args.start is a list of start codons
         # myCommandLine.args.minGene is the minimum Gene length to include
         #
-        import sequenceAnalysis
-        myReader = sequenceAnalysis.fastaReader(myCommandLine.args.inFile)
 
 
 #######
 
 if __name__ == "__main__":
     main()
-
