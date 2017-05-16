@@ -79,7 +79,7 @@ class OrfFinder():
                     start = start_positions[0]
                     stop = i
                     length = stop - start
-                    self.saveOrf(start,stop,length,frame)
+                    self.saveOrf(start,stop,length, (frame%3) + 1 )
                     start_positions = []
                     foundStart = 0
                     foundCodon = 1
@@ -89,7 +89,7 @@ class OrfFinder():
                     start = 0
                     stop = i
                     length = stop - start
-                    self.saveOrf(start, stop, length, frame)
+                    self.saveOrf(start, stop, length, (frame%3) + 1)
                     start_positions = []
                     foundCodon = 1
 
@@ -97,8 +97,9 @@ class OrfFinder():
                 start = start_positions[0]
                 stop = len(self.seq)
                 length = stop - start
-                self.saveOrf(start, stop, length, frame)
+                self.saveOrf(start, stop, length, (frame%3) + 1)
                 #print("dangling start at 3' end")
+                
         return self.orfs
 
     def reverseComp(self):
@@ -132,7 +133,7 @@ class OrfFinder():
                     start = start_positions[0]
                     stop = i
                     length = stop - start
-                    self.saveOrf(start, stop, length, frame)
+                    self.saveOrf(start, stop, length, -((len(comp)-start) % 3)+1)
                     start_positions = []
                     foundStart = 0
                     foundCodon = 1
@@ -142,7 +143,7 @@ class OrfFinder():
                     start = 0
                     stop = i
                     length = stop - start
-                    self.saveOrf(start, stop, length, frame)
+                    self.saveOrf(start, stop, length, -((len(comp)-start) % 3)+1)
                     start_positions = []
                     foundCodon = 1
 
@@ -150,8 +151,9 @@ class OrfFinder():
                 start = start_positions[0]
                 stop = len(comp)
                 length = stop - start
-                self.saveOrf(start, stop, length, frame)
+                self.saveOrf(start, stop, length, -((len(comp)-start) % 3)+1)
                 #print("Dangling start at 3' end.")
+                
         return self.orfs
 
     def saveOrf(self, start, stop, length, frame):
@@ -185,13 +187,15 @@ def main(myCommandLine=None):
     """
 
     fastaFile = sequenceAnalysis.FastAreader('lab5test.fa')
-    fastAstring = ''
+    fastaList = []
     for header, sequence in fastaFile.readFasta():
-        fastAstring += sequence
-    obj = OrfFinder(fastAstring)
-    obj.findOrfs()
-    obj.findRevOrfs()
-    print(obj.orfs)
+        fastaList.append([sequence])
+        
+    print(fastaList)
+    #obj = OrfFinder(fastAstring)
+    #obj.findOrfs()
+    #obj.findRevOrfs()
+    #print(obj.orfs)
 
     if myCommandLine is None:
         myCommandLine = CommandLine()
