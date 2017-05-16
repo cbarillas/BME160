@@ -187,10 +187,11 @@ def main(myCommandLine=None):
 
     if myCommandLine is None:
         myCommandLine = CommandLine()
+        print(myCommandLine.parser.print_help())
     else:
         myCommandLine = CommandLine(myCommandLine)
         ###### replace the code between comments.
-        # myCommandLine.args.inFile = 'tass2.fa'
+        myCommandLine.args.inFile
         # myCommandLine.args.outFile has the output file name
         # myCommandLine.args.longestGene is True if only the longest Gene is desired
         # myCommandLine.args.start is a list of start codons
