@@ -27,12 +27,13 @@ class CommandLine():
         """
         import argparse
         self.parser = argparse.ArgumentParser(
-            description='Program prolog - a brief description of what this thing does',
+            description='Finds the largest ORF in a DNA sequence',
             epilog='Program epilog - some other stuff you feel compelled to say',
             add_help=True,  # default is True
             prefix_chars='-',
             usage='%(prog)s [options] -option1[default] <input >output'
             )
+        self.parser.add_argument("input file", type=argparse.FileType('r'))
         self.parser.add_argument('-lG', '--longestGene', action='store', nargs='?', const=True, default=False,
                                  help='longest Gene in an ORF')
         self.parser.add_argument('-mG', '--minGene', type=int, choices=(100, 200, 300, 500, 1000), action='store',
@@ -175,24 +176,28 @@ class OrfFinder():
 # Main
 # Here is the main program
 ########################################################################
+from sequenceAnalysis import FastAreader 
+
 def main(myCommandLine=None):
     """
     Implements the Usage exception handler that can be raised from anywhere in process. 
     """
-    seq = OrfFinder('AAAATGAAAAAATCAAAATGAAAAAAATACAAAAAA')
-    print(seq.seq)
-    seq.findOrfs()
-    seq.findRevOrfs()
-    print(seq.orfs)
+    #seq = OrfFinder('AAAATGAAAAAATCAAAATGAAAAAAATACAAAAAA')
+    #print(seq.seq)
+    #seq.findOrfs()
+    #seq.findRevOrfs()
+    #print(seq.orfs)
+    #for header, sequence in self.fastaFile.readFasta():
+    #        self.sequence.addSequence(sequence)
 
     if myCommandLine is None:
         myCommandLine = CommandLine()
-        print(myCommandLine.parser.print_help())
+        
     else:
         myCommandLine = CommandLine(myCommandLine)
         ###### replace the code between comments.
-        myCommandLine.args.inFile
-        # myCommandLine.args.outFile has the output file name
+        print(myCommandLine.args.inFile)
+        myCommandLine.args.outFile
         # myCommandLine.args.longestGene is True if only the longest Gene is desired
         # myCommandLine.args.start is a list of start codons
         # myCommandLine.args.minGene is the minimum Gene length to include
