@@ -33,7 +33,7 @@ class CommandLine():
             prefix_chars='-',
             usage='%(prog)s [options] -option1[default] <input >output'
             )
-        self.parser.add_argument("input file", type=argparse.FileType('r'))
+
         self.parser.add_argument('-lG', '--longestGene', action='store', nargs='?', const=True, default=False,
                                  help='longest Gene in an ORF')
         self.parser.add_argument('-mG', '--minGene', type=int, choices=(100, 200, 300, 500, 1000), action='store',
@@ -105,7 +105,7 @@ class OrfFinder():
         """ Helper method to take the complement of a DNA seqeunce.
         :return: Complement of DNA.
         """
-        return ''.join([self.complement[base] for base in self.seq[::-1]])  # Dictionary comprehenesion to find complement of DNA sequence.
+        return ''.join([self.complement[base] for base in self.seq[::-1]])  # Dictionary comprehension to find complement of DNA sequence.
 
     def findRevOrfs(self):
         """ Find Orfs on the bottom strand and return that list of Orfs
@@ -176,28 +176,32 @@ class OrfFinder():
 # Main
 # Here is the main program
 ########################################################################
-from sequenceAnalysis import FastAreader 
+
+import sequenceAnalysis
 
 def main(myCommandLine=None):
     """
     Implements the Usage exception handler that can be raised from anywhere in process. 
     """
-    #seq = OrfFinder('AAAATGAAAAAATCAAAATGAAAAAAATACAAAAAA')
-    #print(seq.seq)
-    #seq.findOrfs()
-    #seq.findRevOrfs()
-    #print(seq.orfs)
-    #for header, sequence in self.fastaFile.readFasta():
-    #        self.sequence.addSequence(sequence)
+
+    fastaFile = sequenceAnalysis.FastAreader('lab5test.fa')
+    fastAstring = ''
+    for header, sequence in fastaFile.readFasta():
+        fastAstring += sequence
+    obj = OrfFinder(fastAstring)
+    obj.findOrfs()
+    obj.findRevOrfs()
+    print(obj.orfs)
 
     if myCommandLine is None:
         myCommandLine = CommandLine()
+
         
     else:
         myCommandLine = CommandLine(myCommandLine)
         ###### replace the code between comments.
-        print(myCommandLine.args.inFile)
-        myCommandLine.args.outFile
+        # myCommandLine.args.inFile
+        # myCommandLine.args.outFile
         # myCommandLine.args.longestGene is True if only the longest Gene is desired
         # myCommandLine.args.start is a list of start codons
         # myCommandLine.args.minGene is the minimum Gene length to include
