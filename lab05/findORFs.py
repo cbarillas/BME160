@@ -76,37 +76,33 @@ class OrfFinder():
                     foundCodon = 1
                 
                 if codon in OrfFinder.stop_codons and foundStart:
-                    start = start_positions[0]
-                    stop = i
-                    length = stop - start
-                    self.saveOrf(start,stop,length, (frame%3) + 1 )
+                    start = start_positions[0] + 1 - frame
+                    stop = i + 3
+                    length = stop - start + 1
+                    self.saveOrf((frame%3) + 1, start, stop, length)
                     start_positions = []
                     foundStart = 0
                     foundCodon = 1
 
                 if foundCodon == 0 and codon in OrfFinder.stop_codons:  # If no start codon was found but stop codon found.
                     #print("dangling stop at 5' end")
-                    start = 0
-                    stop = i
-                    length = stop - start
-                    self.saveOrf(start, stop, length, (frame%3) + 1)
+                    start = 1
+                    stop = i + 3
+                    length = stop - start + 1
+                    self.saveOrf((frame%3) + 1, start, stop, length)
                     start_positions = []
                     foundCodon = 1
 
             if foundStart:  # If no stop codon was found but start codon was found.
-                start = start_positions[0]
+                start = start_positions[0] + 1
                 stop = len(self.seq)
-                length = stop - start
-                self.saveOrf(start, stop, length, (frame%3) + 1)
+                length = stop - start + 1
+                self.saveOrf((frame%3) + 1, start, stop, length)
                 #print("dangling start at 3' end")
                 
         return self.orfs
 
-    def reverseComp(self):
-        """ Helper method to take the complement of a DNA seqeunce.
-        :return: Complement of DNA.
-        """
-        return ''.join([self.complement[base] for base in self.seq[::-1]])  # Dictionary comprehension to find complement of DNA sequence.
+
 
     def findRevOrfs(self):
         """ Find Orfs on the bottom strand and return that list of Orfs
@@ -121,7 +117,7 @@ class OrfFinder():
         for frame in range(0, 3):  # We need to check for frames 1, 2, 3
             foundStart = 0  # Flag name for when finding codons and start codons.
             foundCodon = 0
-            start_positions = []  # Clears the start position list for each frame.
+            #start_positions = []  # Clears the start position list for each frame.
             for i in range(frame, len(comp), 3):
                 codon = comp[i:i + 3]  # The codon is 3 nucleotides.
                 if codon == 'ATG':  # When start codon is found.
@@ -130,33 +126,33 @@ class OrfFinder():
                     foundCodon = 1
 
                 if codon in OrfFinder.stop_codons and foundStart:
-                    start = start_positions[0]
-                    stop = i
-                    length = stop - start
-                    self.saveOrf(start, stop, length, -((len(comp)-start) % 3)+1)
-                    start_positions = []
+                    start = start_positions[0] + 1
+                    stop = i + 3
+                    length = stop - start + 1
+                    self.saveOrf(-1 * ((frame%3) + 1), start, stop, length)
+                    #start_positions = []
                     foundStart = 0
                     foundCodon = 1
 
                 if foundCodon == 0 and codon in OrfFinder.stop_codons:  # If no start codon was found but stop codon found.
                     #print("Dangling stop at 5' end.")
-                    start = 0
-                    stop = i
+                    start = i
+                    stop = i + 3
                     length = stop - start
-                    self.saveOrf(start, stop, length, -((len(comp)-start) % 3)+1)
-                    start_positions = []
+                    self.saveOrf(-1 * ((frame%3) + 1), start, stop, length)
+                    #start_positions = []
                     foundCodon = 1
 
             if foundStart:  # If no stop codon was found but start codon was found.
                 start = start_positions[0]
                 stop = len(comp)
-                length = stop - start
-                self.saveOrf(start, stop, length, -((len(comp)-start) % 3)+1)
+                length = stop - start 
+                self.saveOrf(-1 * ((frame%3) + 1), start, stop, length)
                 #print("Dangling start at 3' end.")
                 
         return self.orfs
 
-    def saveOrf(self, start, stop, length, frame):
+    def saveOrf(self, frame, start, stop, length):
         """ Saves the information about the ORF that was found.
         This method is used in findOrfs and findRevOrfs.
         :param start: Start position.
@@ -165,7 +161,13 @@ class OrfFinder():
         :param frame: Which frame my Orf was found in.
         :return: A list of lists of Orfs with their appropriate information.
         """
-        self.orfs.append([start, stop, length, frame])
+        self.orfs.append([frame, start, stop, length])
+
+    def reverseComp(self):
+        """ Helper method to take the complement of a DNA seqeunce.
+        :return: Complement of DNA.
+        """
+        return ''.join([self.complement[base] for base in self.seq[::-1]])  # Dictionary comprehension to find complement of DNA sequence.
 
     def print(self):
         """ Helper Method to print out my list of Orfs.
@@ -187,15 +189,12 @@ def main(myCommandLine=None):
     """
 
     fastaFile = sequenceAnalysis.FastAreader('lab5test.fa')
-    fastaList = []
     for header, sequence in fastaFile.readFasta():
-        fastaList.append([sequence])
-        
-    print(fastaList)
-    #obj = OrfFinder(fastAstring)
-    #obj.findOrfs()
-    #obj.findRevOrfs()
-    #print(obj.orfs)
+        print(header)
+        obj = OrfFinder(sequence)
+        obj.findOrfs()
+        obj.findRevOrfs()
+        print(obj.orfs)
 
     if myCommandLine is None:
         myCommandLine = CommandLine()
