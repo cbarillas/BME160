@@ -117,7 +117,7 @@ class OrfFinder():
         for frame in range(0, 3):  # We need to check for frames 1, 2, 3
             foundStart = 0  # Flag name for when finding codons and start codons.
             foundCodon = 0
-            #start_positions = []  # Clears the start position list for each frame.
+            start_positions = []  # Clears the start position list for each frame.
             for i in range(frame, len(comp), 3):
                 codon = comp[i:i + 3]  # The codon is 3 nucleotides.
                 if codon == 'ATG':  # When start codon is found.
@@ -130,25 +130,25 @@ class OrfFinder():
                     stop = i + 3
                     length = stop - start + 1
                     self.saveOrf(-1 * ((frame%3) + 1), start, stop, length)
-                    #start_positions = []
+                    start_positions = []
                     foundStart = 0
                     foundCodon = 1
 
                 if foundCodon == 0 and codon in OrfFinder.stop_codons:  # If no start codon was found but stop codon found.
-                    #print("Dangling stop at 5' end.")
-                    start = i
-                    stop = i + 3
-                    length = stop - start
+                    print("Dangling stop at 5' end.")
+                    start = len(comp) - 3
+                    stop = len(comp)
+                    length = stop - start + 1
                     self.saveOrf(-1 * ((frame%3) + 1), start, stop, length)
-                    #start_positions = []
+                    start_positions = []
                     foundCodon = 1
 
             if foundStart:  # If no stop codon was found but start codon was found.
-                start = start_positions[0]
+                start = len(comp) - 3
                 stop = len(comp)
                 length = stop - start 
                 self.saveOrf(-1 * ((frame%3) + 1), start, stop, length)
-                #print("Dangling start at 3' end.")
+                print("Dangling start at 3' end.")
                 
         return self.orfs
 
