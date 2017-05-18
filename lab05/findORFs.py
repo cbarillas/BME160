@@ -134,9 +134,9 @@ class OrfFinder():
                     foundStart = 0
                     foundCodon = 1
 
-                if foundCodon == 0 and codon in OrfFinder.stop_codons:  # If no start codon was found but stop codon found.
-                    print("Dangling stop at 5' end.")
-                    start = len(comp) - 3
+                if not foundCodon and codon in OrfFinder.stop_codons:  # If no start codon was found but stop codon found.
+                    print("Dangling stop at 5' end.", 'i is'+str(i)+'.', 'len is'+str(len(comp))+'.')
+                    start = len(comp) - (i + frame + 2) + 1
                     stop = len(comp)
                     length = stop - start + 1
                     self.saveOrf(-1 * ((frame%3) + 1), start, stop, length)
