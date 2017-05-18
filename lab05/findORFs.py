@@ -135,8 +135,8 @@ class OrfFinder():
                     foundCodon = 1
 
                 if not foundCodon and codon in OrfFinder.stop_codons:  # If no start codon was found but stop codon found.
-                    print("Dangling stop at 5' end.", 'i is'+str(i)+'.', 'len is'+str(len(comp))+'.')
-                    start = len(comp) - (i + frame + 2) + 1
+                    print("Dangling stop at 5' end.", 'i is '+str(i)+'.', 'len is '+str(len(comp))+'.')
+                    start = len(comp) - i - 2
                     stop = len(comp)
                     length = stop - start + 1
                     self.saveOrf(-1 * ((frame%3) + 1), start, stop, length)
@@ -144,9 +144,9 @@ class OrfFinder():
                     foundCodon = 1
 
             if foundStart:  # If no stop codon was found but start codon was found.
-                start = len(comp) - 3
+                start =  start_positions[0] + 1
                 stop = len(comp)
-                length = stop - start 
+                length = stop - start + 1
                 self.saveOrf(-1 * ((frame%3) + 1), start, stop, length)
                 print("Dangling start at 3' end.")
                 
@@ -194,7 +194,9 @@ def main(myCommandLine=None):
         obj = OrfFinder(sequence)
         obj.findOrfs()
         obj.findRevOrfs()
-        print(obj.orfs)
+        for frame, start, stop, length in obj.orfs:
+            print('{:+d} {:>5d}..{:>5d} {:>5d}'.format(frame, start, stop, length))
+            
 
     if myCommandLine is None:
         myCommandLine = CommandLine()
