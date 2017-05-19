@@ -33,7 +33,8 @@ class CommandLine():
             prefix_chars='-',
             usage='%(prog)s [options] -option1[default] <input >output'
             )
-
+        self.parser.add_argument('inputFile', type=argparse.FileType('r'))
+        self.parser.add_argument('-o', '--output', type=argparse.FileType('w'))
         self.parser.add_argument('-lG', '--longestGene', action='store', nargs='?', const=True, default=False,
                                  help='longest Gene in an ORF')
         self.parser.add_argument('-mG', '--minGene', type=int, choices=(100, 200, 300, 500, 1000), action='store',
@@ -76,6 +77,7 @@ class OrfFinder():
                     foundCodon = 1
                 
                 if codon in OrfFinder.stop_codons and foundStart:
+                    #print('ORF found')
                     start = start_positions[0] + 1 - frame
                     stop = i + 3
                     length = stop - start + 1
@@ -85,7 +87,7 @@ class OrfFinder():
                     foundCodon = 1
 
                 if foundCodon == 0 and codon in OrfFinder.stop_codons:  # If no start codon was found but stop codon found.
-                    #print("dangling stop at 5' end")
+                    #print("Dangling stop at 5' end")
                     start = 1
                     stop = i + 3
                     length = stop - start + 1
@@ -98,7 +100,7 @@ class OrfFinder():
                 stop = len(self.seq)
                 length = stop - start + 1
                 self.saveOrf((frame%3) + 1, start, stop, length)
-                #print("dangling start at 3' end")
+                #print("Dangling start at 3' end")
                 
         return self.orfs
 
@@ -125,9 +127,13 @@ class OrfFinder():
                     foundStart = 1
                     foundCodon = 1
 
+                # found stop codon, save orf
                 if codon in OrfFinder.stop_codons and foundStart:
-                    start = start_positions[0] + 1
-                    stop = i + 3
+                    #print("Orf found")
+                    stop = len(comp) - start_positions[0]
+                    start = len(comp) - (i+2)
+                    if frame == 1: stop += 1
+                    elif frame == 2: stop += 2
                     length = stop - start + 1
                     self.saveOrf(-1 * ((frame%3) + 1), start, stop, length)
                     start_positions = []
@@ -135,7 +141,7 @@ class OrfFinder():
                     foundCodon = 1
 
                 if not foundCodon and codon in OrfFinder.stop_codons:  # If no start codon was found but stop codon found.
-                    print("Dangling stop at 5' end.", 'i is '+str(i)+'.', 'len is '+str(len(comp))+'.')
+                    #print("Dangling stop at 5' end")
                     start = len(comp) - i - 2
                     stop = len(comp)
                     length = stop - start + 1
@@ -145,10 +151,10 @@ class OrfFinder():
 
             if foundStart:  # If no stop codon was found but start codon was found.
                 start =  start_positions[0] + 1
-                stop = len(comp)
+                stop = 1
                 length = stop - start + 1
                 self.saveOrf(-1 * ((frame%3) + 1), start, stop, length)
-                print("Dangling start at 3' end.")
+                #print("Dangling start at 3' end")
                 
         return self.orfs
 
@@ -177,10 +183,8 @@ class OrfFinder():
 
 
 ########################################################################
-# Main
-# Here is the main program
+# This is my main program.
 ########################################################################
-
 import sequenceAnalysis
 
 def main(myCommandLine=None):
@@ -194,7 +198,7 @@ def main(myCommandLine=None):
         obj = OrfFinder(sequence)
         obj.findOrfs()
         obj.findRevOrfs()
-        for frame, start, stop, length in obj.orfs:
+        for frame, start, stop, length in sorted(obj.orfs, key=lambda length: -length[3]):
             print('{:+d} {:>5d}..{:>5d} {:>5d}'.format(frame, start, stop, length))
             
 
@@ -204,16 +208,12 @@ def main(myCommandLine=None):
         
     else:
         myCommandLine = CommandLine(myCommandLine)
-        ###### replace the code between comments.
-        # myCommandLine.args.inFile
-        # myCommandLine.args.outFile
-        # myCommandLine.args.longestGene is True if only the longest Gene is desired
-        # myCommandLine.args.start is a list of start codons
-        # myCommandLine.args.minGene is the minimum Gene length to include
-        #
-
-
-#######
+        
+        myCommandLine.args.inFile
+        myCommandLine.args.outFile
+        myCommandLine.args.longestGene
+        myCommandLine.args.start
+        myCommandLine.args.minGene
 
 if __name__ == "__main__":
     main()
