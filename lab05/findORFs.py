@@ -33,10 +33,7 @@ class CommandLine():
             prefix_chars='-',
             usage='%(prog)s [options] -option1[default] <input >output'
             )
-        self.parser.add_argument('inputFile', type=argparse.FileType('r'))
-        self.parser.add_argument('-o', '--output', type=argparse.FileType('w'))
-        self.parser.add_argument('-lG', '--longestGene', action='store', nargs='?', const=True, default=False,
-                                 help='longest Gene in an ORF')
+        self.parser.add_argument('-lG', '--longestGene', action='store_true', help='longest Gene in an ORF')
         self.parser.add_argument('-mG', '--minGene', type=int, choices=(100, 200, 300, 500, 1000), action='store',
                                  help='minimum Gene length')
         self.parser.add_argument('-s', '--start', action='append', nargs='?',
@@ -111,7 +108,7 @@ class OrfFinder():
         remember to fixup the orfList so that it refers to top strand coordinates and the rev frames
         :return: 
         """
-        comp = self.reverseComp()
+        comp = self.reverseComplement()
         start_positions = []
         foundStart = 0
         foundCodon = 0
@@ -161,25 +158,23 @@ class OrfFinder():
     def saveOrf(self, frame, start, stop, length):
         """ Saves the information about the ORF that was found.
         This method is used in findOrfs and findRevOrfs.
-        :param start: Start position.
-        :param stop: Stop position.
-        :param length: Length of my Orf. (Stop - Start)
-        :param frame: Which frame my Orf was found in.
-        :return: A list of lists of Orfs with their appropriate information.
+        Args:
+            param1 (int): Start position.
+            param2 (int): Stop position.
+            param3 (int): Length of my Orf. (Stop - Start)
+            param4 (int): Which frame my Orf was found in.
+        Returns:
+            (list): A list of lists of Orfs with their appropriate information.
         """
         self.orfs.append([frame, start, stop, length])
 
-    def reverseComp(self):
-        """ Helper method to take the complement of a DNA seqeunce.
-        :return: Complement of DNA.
+    def reverseComplement(self):
+        """ Helper method to take the reverse complement of a DNA seqeunce.
+        Returns:
+            (list): Reverse complement of DNA sequence.
         """
-        return ''.join([self.complement[base] for base in self.seq[::-1]])  # Dictionary comprehension to find complement of DNA sequence.
+        return ''.join([self.complement[base] for base in self.seq[::-1]])  # Dictionary comprehension to find reverse complement of DNA sequence.
 
-    def print(self):
-        """ Helper Method to print out my list of Orfs.
-        :return:
-        """
-        print(self.orfs)
 
 
 ########################################################################
@@ -188,32 +183,22 @@ class OrfFinder():
 import sequenceAnalysis
 
 def main(myCommandLine=None):
-    """
-    Implements the Usage exception handler that can be raised from anywhere in process. 
-    """
-
-    fastaFile = sequenceAnalysis.FastAreader('lab5test.fa')
-    for header, sequence in fastaFile.readFasta():
-        print(header)
-        obj = OrfFinder(sequence)
-        obj.findOrfs()
-        obj.findRevOrfs()
-        for frame, start, stop, length in sorted(obj.orfs, key=lambda length: -length[3]):
-            print('{:+d} {:>5d}..{:>5d} {:>5d}'.format(frame, start, stop, length))
-            
-
+    """Reads in a fasta file and outputs the ORFs frame, start, stop, and length position on a output file."""
     if myCommandLine is None:
         myCommandLine = CommandLine()
-
-        
+        if myCommandLine.args.longestGene:  # If the terminal sees lG flag variable start this part of code.
+            fastaFile = sequenceAnalysis.FastAreader()
+            for header, sequence in fastaFile.readFasta():
+                print(header)
+                orfData = OrfFinder(sequence)
+                orfData.findOrfs()
+                orfData.findRevOrfs()
+                filteredList = filter(lambda orf: orf[3] > myCommandLine.args.minGene, orfData.orfs)  # Filters out the ORFS depending on the minGene arg.
+                for frame, start, stop, length in sorted(filteredList, key=lambda orf: orf[3], reverse = True):  # Unzips filteredList and sorts the list by length. 
+                    print('{:+d} {:>5d}..{:>5d} {:>5d}'.format(frame, start, stop, length))
     else:
         myCommandLine = CommandLine(myCommandLine)
-        
-        myCommandLine.args.inFile
-        myCommandLine.args.outFile
-        myCommandLine.args.longestGene
-        myCommandLine.args.start
-        myCommandLine.args.minGene
+  
 
 if __name__ == "__main__":
     main()
