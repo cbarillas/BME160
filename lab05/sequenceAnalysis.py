@@ -37,24 +37,24 @@ class NucParams:
 
     dnaCodonTable = {key.replace('U','T'):value for key, value in rnaCodonTable.items()}
 
-    validNucleotides = {'A': 0, 'C': 0, 'G': 0, 'T': 0, 'U': 0, 'N': 0}
+    validNucleotides = {'A': 0, 'C': 0, 'G': 0, 'T': 0, 'U': 0, 'N':0}
 
     def __init__(self):
         """
         Initializes dictionaries with appropriate keys, and values set to zero.
         """
         self.aminoAcidComposition = {}
-        self.codonComposition = {}
-        self.nucComposition = {}
+        self.codonsComposition = {}
+        self.nucleotideComposition = {}
 
         for aa in ProteinParam.aa2mw:  # Initializes Amino Acid dictionary.
             self.aminoAcidComposition[aa] = 0
 
         for codon in self.rnaCodonTable:  # Initializes Codon Composition dictionary.
-            self.codonComposition[codon] = 0
+            self.codonsComposition[codon] = 0
 
-        for nuc in self.validNucleotides:  # Initializes Nucleotide Composition dictionary.
-            self.nucComposition[nuc] = 0
+        for nuc in NucParams.validNucleotides:  # Initializes Nucleotide Composition dictionary.
+            self.nucleotideComposition[nuc] = 0
 
     def addSequence(self, thisSequence):
         """
@@ -62,15 +62,15 @@ class NucParams:
         with the __init__ method.
         """
         for nuc in thisSequence:
-            if nuc in self.validNucleotides.keys():  # Checks if each nucleotide is valid.
-                self.nucComposition[nuc] += thisSequence.count(nuc)  # Counts how many nucleotides there are.
+            if nuc in NucParams.validNucleotides.keys():  # Checks if each nucleotide is valid.
+                self.nucleotideComposition[nuc] += 1  # Counts how many nucleotides there are.
 
         rnaSequence = thisSequence.replace('T', 'U')  # Converts DNA sequence to RNA
 
         for start in range(0, len(rnaSequence), 3):
             codon = rnaSequence[start: start + 3]
             if codon in self.rnaCodonTable:
-                self.codonComposition[codon] += 1  # Adds RNA sequence to dictionary w/ count.
+                self.codonsComposition[codon] += 1  # Adds RNA sequence to dictionary w/ count.
                 aa = self.rnaCodonTable[codon]
                 if aa != '-':
                     self.aminoAcidComposition[aa] += 1  # Adds amino acid to dictionary w/ count.
@@ -86,13 +86,13 @@ class NucParams:
         """
         Returns the updated nucleotide composition dictionary from addSequence.
         """
-        return self.nucComposition
+        return self.nucleotideComposition
 
     def codonComposition(self):
         """
         This dictionary returns codons in RNA format and counts of codon.
         """
-        return self.codonComposition
+        return self.codonsComposition
 
     def nucCount(self):
         """
@@ -100,7 +100,7 @@ class NucParams:
         value should exactly equal the sum over the nucleotide composition dictionary. 
         """
         nucTotal = 0
-        for count in self.nucComposition.values():
+        for count in self.nucleotideComposition.values():
             nucTotal += count
         return nucTotal
 
@@ -133,7 +133,6 @@ class ProteinParam(str):
     aa2chargeNeg = {'D': 3.86, 'E': 4.25, 'C': 8.33, 'Y': 10}
     aaNterm = 9.69
     aaCterm = 2.34
-    aaDictionary = {}
 
     def __init__(self, protein):
         """Takes in sequence from users input then creates a list of 
@@ -146,6 +145,7 @@ class ProteinParam(str):
         """
         myList = ''.join(protein).split()
         self.proteinString = ''.join(myList).upper()
+        self.aaDictionary = {}
 
         for aa in self.aa2mw.keys():  # Iterates through aa2mw dictionary, the valid aa's.
             self.aaDictionary[aa] = float(self.proteinString.count(aa))  # Stores values.
@@ -175,7 +175,7 @@ class ProteinParam(str):
         bestPH = 0
         particularPH = 0
         while particularPH < 14.01:
-            charge = abs(self.charge(particularPH))  # 0 <= charge <= 14
+            charge = abs(self.__charge__(particularPH))  # 0 <= charge <= 14
             if charge < bigCharge:
                 bigCharge = charge
                 bestPH = particularPH
@@ -189,7 +189,7 @@ class ProteinParam(str):
         """
         return self.aaDictionary
 
-    def charge(self, pH):
+    def __charge__(self, pH):
         """Calculates the net charge on the protein at specific pH using pKa of each
         charged amino acid, Nterminus and Cterminus.
         Args:
