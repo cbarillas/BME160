@@ -29,7 +29,7 @@ class GenomeAnalyzer:
             
         megaBP = self.thisAnalyzer.nucCount() * (1/1000)  # Kishwar said to divide by 1,000 but I think we should divide by 1,000,000
         print('Sequence length = {0:.2f} Mb\n'.format(megaBP))
-        print('GC Content = {:.1f} %\n'.format(gc))
+        print('GC Content = {:.1f} %\n'.format(gc*100))
 
         for codon in sorted(self.thisAnalyzer.codonsComposition):
             try:  # Calculates the relative codon frequency for each codon found.
