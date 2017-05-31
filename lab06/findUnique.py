@@ -30,8 +30,9 @@ class findUnique:
         for header, sequence in fastaFile.readFasta():  # Reads FastA file and yields the tRNA header/sequence.
             noPeriodSequence = sequence.replace('.','')
             noDashSequence = noPeriodSequence.replace('-','')
-            self.headerSequenceDictionary[count] = [header, noDashSequence] # Initialize dictionary values with list = [header, squence].
-            mypowerSet = self.powerSet(noDashSequence)  # Finds the power set for each tRNA sequence.
+            noUnderscoreSequence = noDashSequence.replace('_','')
+            self.headerSequenceDictionary[count] = [header, noUnderscoreSequence] # Initialize dictionary values with list = [header, squence].
+            mypowerSet = self.powerSet(noUnderscoreSequence)  # Finds the power set for each tRNA sequence.
             self.powerSetList.append(mypowerSet)  # Add power set for each tRNA to a list.
             count += 1
 
